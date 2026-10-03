@@ -67,7 +67,7 @@ export const TeacherDashboard = () => {
           value="125"
           subtitle="Enrolled across sections"
           icon={Users}
-          color="blue"
+          color="teal"
         />
         <StatCard
           title="Attendance Status"
@@ -102,11 +102,11 @@ export const TeacherDashboard = () => {
 
           <Link
             to="/teacher/classes"
-            className="p-4 rounded-2xl bg-blue-50/80 hover:bg-blue-600 hover:text-white border border-blue-100 text-blue-900 group transition duration-200"
+            className="p-4 rounded-2xl bg-teal-50/80 hover:bg-teal-600 hover:text-white border border-teal-100 text-teal-900 group transition duration-200"
           >
-            <BookOpen className="w-6 h-6 text-blue-600 group-hover:text-white mb-2" />
+            <BookOpen className="w-6 h-6 text-teal-600 group-hover:text-white mb-2" />
             <p className="font-bold text-xs">My Classes & Roster</p>
-            <p className="text-[10px] text-blue-600 group-hover:text-blue-100 mt-0.5">View Enrolled Students</p>
+            <p className="text-[10px] text-teal-600 group-hover:text-teal-100 mt-0.5">View Enrolled Students</p>
           </Link>
 
           <Link

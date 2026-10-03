@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { PageHeader } from '../../components/common/PageHeader';
+import { VoiceInputButton } from '../../components/common/VoiceInputButton';
 import { Calendar, Paperclip, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const LeaveApplyPage = () => {
@@ -70,7 +71,7 @@ export const LeaveApplyPage = () => {
                   onClick={() => setLeaveType(type)}
                   className={`p-3 rounded-2xl text-xs font-bold border transition text-center ${
                     leaveType === type
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
+                      ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-500/20'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
@@ -93,7 +94,7 @@ export const LeaveApplyPage = () => {
                   required
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-teal-500"
                 />
               </div>
             </div>
@@ -109,7 +110,7 @@ export const LeaveApplyPage = () => {
                   required
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-teal-500"
                 />
               </div>
               {errors.endDate && <p className="text-[11px] text-rose-600 mt-1">{errors.endDate}</p>}
@@ -118,16 +119,23 @@ export const LeaveApplyPage = () => {
 
           {/* Reason */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-              Reason for Absence <span className="text-rose-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                Reason for Absence <span className="text-rose-500">*</span>
+              </label>
+              <VoiceInputButton
+                currentValue={reason}
+                onTranscript={(text) => setReason(text)}
+                mode="append"
+              />
+            </div>
             <textarea
               rows={4}
               required
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="State the detailed reason for leave (e.g. medical illness, attending sister's marriage, paper presentation)..."
-              className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs outline-none focus:bg-white focus:border-blue-500"
+              placeholder="State the detailed reason for leave (e.g. medical illness, family emergency). Dictate with voice if preferred..."
+              className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs outline-none focus:bg-white focus:border-teal-500 transition"
             />
             {errors.reason && <p className="text-[11px] text-rose-600 mt-1">{errors.reason}</p>}
           </div>
@@ -143,7 +151,7 @@ export const LeaveApplyPage = () => {
               value={emergencyContact}
               onChange={(e) => setEmergencyContact(e.target.value)}
               placeholder="+91 98765 00000"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
             />
             {errors.emergencyContact && <p className="text-[11px] text-rose-600 mt-1">{errors.emergencyContact}</p>}
           </div>
@@ -153,7 +161,7 @@ export const LeaveApplyPage = () => {
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
               Upload Supporting Document (Optional for Medical / Event)
             </label>
-            <div className="border-2 border-dashed border-slate-200 hover:border-blue-400 bg-slate-50/50 p-4 rounded-2xl text-center cursor-pointer transition">
+            <div className="border-2 border-dashed border-slate-200 hover:border-teal-400 bg-slate-50/50 p-4 rounded-2xl text-center cursor-pointer transition">
               <input
                 type="file"
                 id="file-upload"
@@ -181,7 +189,7 @@ export const LeaveApplyPage = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md shadow-blue-500/20 hover:bg-blue-700 flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-teal-600 text-white text-xs font-bold shadow-md shadow-teal-500/20 hover:bg-teal-700 flex items-center gap-2"
             >
               <Send className="w-4 h-4" /> Submit Leave Application
             </button>

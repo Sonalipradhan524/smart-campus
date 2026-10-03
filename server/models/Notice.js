@@ -10,6 +10,11 @@ const noticeSchema = new mongoose.Schema(
     category: { type: String, default: 'General' },
     content: { type: String, required: true },
     readStatus: { type: Boolean, default: false },
+    targetAudience: { type: String, default: 'All' }, // 'All' | 'Students' | 'Teachers' | 'Department' | 'Course' | 'Semester' | 'Section'
+    targetDepartment: { type: String, default: '' },
+    targetCourse: { type: String, default: '' },
+    targetSemester: { type: String, default: '' },
+    targetSection: { type: String, default: '' }
   },
   { timestamps: true }
 );

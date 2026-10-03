@@ -9,8 +9,13 @@ const complaintSchema = new mongoose.Schema(
     location: { type: String, required: true },
     submittedDate: { type: String, required: true },
     priority: { type: String, default: 'Medium' },
-    status: { type: String, enum: ['Submitted', 'Assigned', 'In Progress', 'Resolved'], default: 'Submitted' },
+    status: {
+      type: String,
+      enum: ['Submitted', 'Assigned', 'In Progress', 'Resolved', 'Rejected'],
+      default: 'Submitted',
+    },
     assignedTo: { type: String, default: 'Unassigned' },
+    assignedDept: { type: String, default: 'Campus Administrator' },
     description: { type: String, required: true },
     imagePreview: { type: String, default: null },
     aiMetadata: {
@@ -19,11 +24,15 @@ const complaintSchema = new mongoose.Schema(
       detectedPriority: { type: String },
       targetDept: { type: String },
       estimatedResolution: { type: String },
+      matchedKeywords: [{ type: String }],
+      routingLogic: { type: String, default: 'Transparent Keyword-Based Triaging' },
     },
     updates: [
       {
+        status: { type: String },
         date: { type: String },
         note: { type: String },
+        updatedBy: { type: String, default: 'Administrator' },
       },
     ],
   },

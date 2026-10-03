@@ -16,8 +16,8 @@ export const RequestTimeline = ({ timeline = [] }) => {
             icon = <CheckCircle2 className="w-5 h-5 text-emerald-600 bg-white" />;
             textColor = 'text-slate-900 font-bold';
           } else if (item.status === 'current') {
-            icon = <Clock className="w-5 h-5 text-blue-600 bg-white animate-pulse" />;
-            textColor = 'text-blue-700 font-bold';
+            icon = <Clock className="w-5 h-5 text-teal-600 bg-white animate-pulse" />;
+            textColor = 'text-teal-700 font-bold';
           } else if (item.status === 'rejected') {
             icon = <XCircle className="w-5 h-5 text-rose-600 bg-white" />;
             textColor = 'text-rose-700 font-bold';

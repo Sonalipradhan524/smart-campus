@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { PageHeader } from '../../components/common/PageHeader';
+import { VoiceInputButton } from '../../components/common/VoiceInputButton';
 import { Utensils, Star, Send, Coffee, Sun, Sunset, Moon, CheckCircle2 } from 'lucide-react';
 
 export const MessPage = () => {
@@ -17,18 +18,20 @@ export const MessPage = () => {
   };
 
   const mealCards = [
-    { title: 'Breakfast', icon: Coffee, time: messMenu.breakfast.time, details: messMenu.breakfast.title, sides: messMenu.breakfast.sides, color: 'border-amber-200 bg-amber-50/50' },
-    { title: 'Lunch', icon: Sun, time: messMenu.lunch.time, details: messMenu.lunch.title, sides: messMenu.lunch.sides, color: 'border-blue-200 bg-blue-50/50' },
-    { title: 'Snacks', icon: Sunset, time: messMenu.snacks.time, details: messMenu.snacks.title, sides: messMenu.snacks.sides, color: 'border-orange-200 bg-orange-50/50' },
-    { title: 'Dinner', icon: Moon, time: messMenu.dinner.time, details: messMenu.dinner.title, sides: messMenu.dinner.sides, color: 'border-purple-200 bg-purple-50/50' },
+    { title: 'Breakfast', icon: Coffee, time: messMenu?.breakfast?.time || '07:30 AM - 09:15 AM', details: messMenu?.breakfast?.title || 'Puri, Ghuguni, Tea', sides: messMenu?.breakfast?.sides || 'Central Hall', color: 'border-amber-200 bg-amber-50/50' },
+    { title: 'Lunch', icon: Sun, time: messMenu?.lunch?.time || '12:30 PM - 02:15 PM', details: messMenu?.lunch?.title || 'Rice, Dal, Veg Curry', sides: messMenu?.lunch?.sides || 'Salad & Curd', color: 'border-teal-200 bg-teal-50/50' },
+    { title: 'Snacks', icon: Sunset, time: messMenu?.snacks?.time || '05:00 PM - 06:15 PM', details: messMenu?.snacks?.title || 'Snacks & Tea', sides: messMenu?.snacks?.sides || 'Refreshment Desk', color: 'border-orange-200 bg-orange-50/50' },
+    { title: 'Dinner', icon: Moon, time: messMenu?.dinner?.time || '08:00 PM - 09:45 PM', details: messMenu?.dinner?.title || 'Roti, Dal & Curry', sides: messMenu?.dinner?.sides || 'Dessert', color: 'border-purple-200 bg-purple-50/50' },
   ];
+
+  const weeklyHighlights = messMenu?.weeklyHighlights || [];
 
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
         title="Hostel Mess & Dining Hub"
         subtitle="Daily menu updates, nutritional highlights, and interactive student meal feedback."
-        badge={`${messMenu.todayDay}'s Menu`}
+        badge={`${messMenu?.todayDay || 'Today'}'s Menu`}
       />
 
       {/* Today's 4 Meals */}
@@ -58,7 +61,7 @@ export const MessPage = () => {
         {/* Weekly Diet Plan Table (2 cols) */}
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs">
           <h3 className="text-base font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-            <Utensils className="w-5 h-5 text-blue-600" /> Weekly Mess Menu Schedule
+            <Utensils className="w-5 h-5 text-teal-600" /> Weekly Mess Menu Schedule
           </h3>
 
           <div className="overflow-x-auto custom-scrollbar">
@@ -71,10 +74,10 @@ export const MessPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
-                {messMenu.weeklyHighlights.map((row) => (
-                  <tr key={row.day} className={row.day === messMenu.todayDay ? 'bg-blue-50/70 font-bold text-blue-900' : 'hover:bg-slate-50'}>
+                {weeklyHighlights.map((row) => (
+                  <tr key={row.day} className={row.day === messMenu?.todayDay ? 'bg-teal-50/70 font-bold text-teal-900' : 'hover:bg-slate-50'}>
                     <td className="p-3 flex items-center gap-2">
-                      {row.day === messMenu.todayDay && <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />}
+                      {row.day === messMenu?.todayDay && <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse" />}
                       {row.day}
                     </td>
                     <td className="p-3 text-slate-700">{row.lunch}</td>
@@ -100,7 +103,7 @@ export const MessPage = () => {
               <select
                 value={mealType}
                 onChange={(e) => setMealType(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
               >
                 <option value="Breakfast">Breakfast</option>
                 <option value="Lunch">Lunch</option>
@@ -128,16 +131,23 @@ export const MessPage = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                Comments / Food Quality Feedback
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Comments / Food Quality Feedback
+                </label>
+                <VoiceInputButton
+                  currentValue={comment}
+                  onTranscript={(text) => setComment(text)}
+                  mode="append"
+                />
+              </div>
               <textarea
                 rows={3}
                 required
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="Give feedback on taste, hygiene, or quantity..."
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                placeholder="Give feedback on taste, hygiene, or quantity. Dictate with voice if preferred..."
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500 transition"
               />
             </div>
 

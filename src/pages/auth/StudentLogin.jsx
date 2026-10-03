@@ -31,13 +31,13 @@ export const StudentLogin = () => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Dynamic Background Effects */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md bg-slate-800/80 backdrop-blur-xl border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative z-10 animate-fade-in">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 mb-2 shadow-inner">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-teal-600/20 border border-teal-500/30 text-teal-400 mb-2 shadow-inner">
             <GraduationCap className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Student Portal Login</h1>
@@ -55,7 +55,7 @@ export const StudentLogin = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300">Student ID or Email Address <span className="text-blue-400">*</span></label>
+            <label className="text-xs font-semibold text-slate-300">Student ID or Email Address <span className="text-teal-400">*</span></label>
             <div className="relative">
               <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
@@ -64,15 +64,15 @@ export const StudentLogin = () => {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="e.g. 2201105042 or student@bput.ac.in"
-                className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-slate-300">Password <span className="text-blue-400">*</span></label>
-              <Link to="/forgot-password" className="text-[11px] font-medium text-blue-400 hover:text-blue-300 transition flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-300">Password <span className="text-teal-400">*</span></label>
+              <Link to="/forgot-password" className="text-[11px] font-medium text-teal-400 hover:text-teal-300 transition flex items-center gap-1">
                 <HelpCircle className="w-3 h-3" /> Forgot?
               </Link>
             </div>
@@ -84,7 +84,7 @@ export const StudentLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
               />
             </div>
           </div>
@@ -92,7 +92,7 @@ export const StudentLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-teal-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? 'Authenticating...' : 'Login as Student'}
             <ArrowRight className="w-4 h-4" />
@@ -103,7 +103,7 @@ export const StudentLogin = () => {
         <div className="pt-4 border-t border-slate-700/60 text-center space-y-3">
           <p className="text-xs text-slate-400">
             Don't have a student account yet?{' '}
-            <Link to="/student/register" className="font-bold text-blue-400 hover:underline">
+            <Link to="/student/register" className="font-bold text-teal-400 hover:underline">
               Create Student Account
             </Link>
           </p>

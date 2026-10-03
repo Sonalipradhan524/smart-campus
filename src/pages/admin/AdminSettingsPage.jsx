@@ -65,7 +65,7 @@ export const AdminSettingsPage = () => {
       {/* Settings Form */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xs space-y-6">
         <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
-          <Settings className="w-4 h-4 text-blue-600" /> Platform Configuration
+          <Settings className="w-4 h-4 text-teal-600" /> Platform Configuration
         </h3>
 
         <form onSubmit={handleSaveSettings} className="space-y-5 text-xs">
@@ -95,7 +95,7 @@ export const AdminSettingsPage = () => {
                 type="checkbox"
                 checked={aiRoutingEnabled}
                 onChange={(e) => setAiRoutingEnabled(e.target.checked)}
-                className="w-4 h-4 rounded text-blue-600"
+                className="w-4 h-4 rounded text-teal-600"
               />
             </div>
 
@@ -108,7 +108,7 @@ export const AdminSettingsPage = () => {
                 type="checkbox"
                 checked={autoApprovalGatePass}
                 onChange={(e) => setAutoApprovalGatePass(e.target.checked)}
-                className="w-4 h-4 rounded text-blue-600"
+                className="w-4 h-4 rounded text-teal-600"
               />
             </div>
           </div>
@@ -116,7 +116,7 @@ export const AdminSettingsPage = () => {
           <div className="pt-2 flex justify-end">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 flex items-center gap-1.5"
+              className="px-6 py-2.5 bg-teal-600 text-white font-bold rounded-xl shadow-md hover:bg-teal-700 flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" /> Save System Settings
             </button>

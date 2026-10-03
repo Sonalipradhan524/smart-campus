@@ -46,7 +46,7 @@ export const MobileBottomNav = () => {
               className={({ isActive }) =>
                 `flex flex-col items-center py-1 px-2 rounded-xl transition ${
                   isActive
-                    ? 'text-blue-600 font-bold'
+                    ? 'text-teal-600 font-bold'
                     : 'text-slate-500 hover:text-slate-800'
                 }`
               }

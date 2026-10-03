@@ -11,7 +11,7 @@ export const Toast = () => {
     success: 'bg-emerald-600 text-white shadow-emerald-500/20',
     error: 'bg-rose-600 text-white shadow-rose-500/20',
     warning: 'bg-amber-600 text-white shadow-amber-500/20',
-    info: 'bg-blue-600 text-white shadow-blue-500/20',
+    info: 'bg-teal-600 text-white shadow-teal-500/20',
   };
 
   const icons = {

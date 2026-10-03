@@ -26,8 +26,17 @@ export const FeesPage = () => {
     setLoading(true);
     try {
       const data = await feesAPI.get();
-      setFeeData(data);
-      setPayAmount(data.dueFee || 85000);
+      if (data) {
+        const normalized = {
+          totalFee: data.totalFee ?? data.totalAmount ?? 85000,
+          paidFee: data.paidFee ?? data.paidAmount ?? 0,
+          dueFee: data.dueFee ?? data.dueAmount ?? (data.totalAmount ? Math.max(0, (data.totalAmount || 0) - (data.paidAmount || 0)) : 85000),
+          dueDate: data.dueDate || '2026-09-25',
+          transactions: Array.isArray(data.transactions) ? data.transactions : [],
+        };
+        setFeeData(normalized);
+        setPayAmount(normalized.dueFee);
+      }
     } catch (e) {
       console.warn('Fee fetch error:', e.message);
     } finally {
@@ -74,49 +83,49 @@ export const FeesPage = () => {
       <PageHeader
         title="Fee Management & Receipts"
         subtitle="View tuition & hostel fee breakdown, paid history, and instant online payments."
-        badge={`Due: ₹${feeData.dueFee.toLocaleString()}`}
+        badge={`Due: ₹${(feeData?.dueFee ?? 0).toLocaleString()}`}
       />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           title="Total Semester Fees"
-          value={`₹${feeData.totalFee.toLocaleString()}`}
+          value={`₹${(feeData?.totalFee ?? 0).toLocaleString()}`}
           subtitle="6th Semester B.Tech CSE"
           icon={CreditCard}
-          color="blue"
+          color="teal"
         />
         <StatCard
           title="Total Fees Paid"
-          value={`₹${feeData.paidFee.toLocaleString()}`}
+          value={`₹${(feeData?.paidFee ?? 0).toLocaleString()}`}
           subtitle="Verified by Accounts Dept"
           icon={CheckCircle2}
           color="emerald"
         />
         <StatCard
           title="Outstanding Balance"
-          value={`₹${feeData.dueFee.toLocaleString()}`}
-          subtitle={`Due Date: ${feeData.dueDate}`}
+          value={`₹${(feeData?.dueFee ?? 0).toLocaleString()}`}
+          subtitle={`Due Date: ${feeData?.dueDate || '2026-09-25'}`}
           icon={CreditCard}
-          color={feeData.dueFee > 0 ? 'rose' : 'emerald'}
+          color={(feeData?.dueFee ?? 0) > 0 ? 'rose' : 'emerald'}
         />
       </div>
 
       {/* Pay Action Card if Due > 0 */}
-      {feeData.dueFee > 0 && (
-        <div className="p-6 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      {(feeData?.dueFee ?? 0) > 0 && (
+        <div className="p-6 rounded-3xl bg-gradient-to-r from-teal-900 via-indigo-900 to-slate-900 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-md bg-rose-500/20 text-rose-300 border border-rose-400/30">
               Payment Pending
             </span>
             <h3 className="font-extrabold text-xl text-white mt-1">Outstanding Semester Caution Fee</h3>
-            <p className="text-xs text-blue-200 mt-1">Pay before 25th September to avoid late submission penalties.</p>
+            <p className="text-xs text-teal-200 mt-1">Pay before 25th September to avoid late submission penalties.</p>
           </div>
           <button
             onClick={() => setShowPayModal(true)}
             className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/30 hover:opacity-95 flex items-center justify-center gap-2"
           >
-            <CreditCard className="w-4 h-4" /> Pay ₹{feeData.dueFee.toLocaleString()} Online
+            <CreditCard className="w-4 h-4" /> Pay ₹{(feeData?.dueFee ?? 0).toLocaleString()} Online
           </button>
         </div>
       )}
@@ -143,24 +152,24 @@ export const FeesPage = () => {
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-slate-400">Loading fee records...</td>
                 </tr>
-              ) : feeData.transactions.length === 0 ? (
+              ) : (!feeData?.transactions || feeData.transactions.length === 0) ? (
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-slate-400">No payment receipts in database yet.</td>
                 </tr>
               ) : (
-                feeData.transactions.map((tx) => (
-                  <tr key={tx.id || tx._id} className="hover:bg-slate-50">
-                    <td className="p-3 font-mono font-bold text-slate-900">{tx.id}</td>
-                    <td className="p-3 text-slate-800 font-bold">{tx.description}</td>
+                feeData.transactions.map((tx, idx) => (
+                  <tr key={tx.id || tx._id || idx} className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-slate-900">{tx.id || tx._id || `TXN-${idx + 1}`}</td>
+                    <td className="p-3 text-slate-800 font-bold">{tx.description || tx.title || 'Semester Fee Payment'}</td>
                     <td className="p-3 text-slate-500">{tx.date}</td>
-                    <td className="p-3 font-bold text-slate-900">₹{tx.amount.toLocaleString()}</td>
+                    <td className="p-3 font-bold text-slate-900">₹{(tx.amount || 0).toLocaleString()}</td>
                     <td className="p-3 text-slate-600">{tx.method}</td>
                     <td className="p-3"><StatusBadge status={tx.status} /></td>
                     <td className="p-3">
-                      {tx.status === 'Paid' ? (
+                      {(tx.status === 'Paid' || tx.status === 'Completed' || tx.status === 'success') ? (
                         <button
-                          onClick={() => alert(`Downloading verified fee receipt for ${tx.id}`)}
-                          className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1"
+                          onClick={() => alert(`Downloading verified fee receipt for ${tx.id || tx._id}`)}
+                          className="text-teal-600 hover:text-teal-800 font-bold flex items-center gap-1"
                         >
                           <Download className="w-3.5 h-3.5" /> PDF
                         </button>
@@ -183,7 +192,7 @@ export const FeesPage = () => {
         title="CampusOS Payment Gateway"
       >
         <form onSubmit={handlePay} className="space-y-4 text-xs">
-          <div className="p-3 rounded-2xl bg-blue-50 border border-blue-100">
+          <div className="p-3 rounded-2xl bg-teal-50 border border-teal-100">
             <p className="text-slate-500 font-medium">Payee: Student Account</p>
             <p className="font-bold text-slate-900 text-sm mt-0.5">BPUT Autonomous Campus Fee Account</p>
           </div>
@@ -214,7 +223,7 @@ export const FeesPage = () => {
                   onClick={() => setPaymentMethod(mode)}
                   className={`p-2.5 rounded-xl border text-center font-bold transition ${
                     paymentMethod === mode
-                      ? 'bg-blue-600 text-white border-blue-600'
+                      ? 'bg-teal-600 text-white border-teal-600'
                       : 'bg-slate-50 text-slate-700 border-slate-200'
                   }`}
                 >

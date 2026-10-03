@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { PageHeader } from '../../components/common/PageHeader';
+import { VoiceInputButton } from '../../components/common/VoiceInputButton';
 import { CSSQRCode } from '../../components/common/CSSQRCode';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { DoorOpen, Clock, MapPin, Send, ShieldCheck, UserCheck, Calendar } from 'lucide-react';
@@ -44,7 +45,7 @@ export const GatePassPage = () => {
         {/* Left Side: Gate Pass Request Form */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xs">
           <h3 className="text-base font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-            <DoorOpen className="w-5 h-5 text-blue-600" /> Apply for Gate Outing Pass
+            <DoorOpen className="w-5 h-5 text-teal-600" /> Apply for Gate Outing Pass
           </h3>
 
           <form onSubmit={handleGeneratePass} className="space-y-4">
@@ -57,7 +58,7 @@ export const GatePassPage = () => {
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
               />
             </div>
 
@@ -72,7 +73,7 @@ export const GatePassPage = () => {
                   value={exitTime}
                   onChange={(e) => setExitTime(e.target.value)}
                   placeholder="04:00 PM"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
                 />
               </div>
               <div>
@@ -85,35 +86,50 @@ export const GatePassPage = () => {
                   value={returnTime}
                   onChange={(e) => setReturnTime(e.target.value)}
                   placeholder="08:30 PM"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                Destination
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Destination
+                </label>
+                <VoiceInputButton
+                  currentValue={destination}
+                  onTranscript={(text) => setDestination(text)}
+                  mode="replace"
+                />
+              </div>
               <input
                 type="text"
                 required
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 placeholder="Market / Station / Home"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500 transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                Reason
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Reason for Outing
+                </label>
+                <VoiceInputButton
+                  currentValue={reason}
+                  onTranscript={(text) => setReason(text)}
+                  mode="append"
+                />
+              </div>
               <textarea
                 rows={2}
                 required
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                placeholder="State outing purpose or dictate with voice..."
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500 transition"
               />
             </div>
 
@@ -126,13 +142,13 @@ export const GatePassPage = () => {
                 required
                 value={emergencyContact}
                 onChange={(e) => setEmergencyContact(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl text-xs shadow-md shadow-blue-500/20 hover:opacity-95 flex items-center justify-center gap-2"
+              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-teal-600 to-indigo-600 text-white font-bold rounded-xl text-xs shadow-md shadow-teal-500/20 hover:opacity-95 flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" /> Issue Digital Pass Instant QR
             </button>
@@ -142,15 +158,15 @@ export const GatePassPage = () => {
         {/* Right Side: Active Digital Pass Card */}
         <div>
           {activePass ? (
-            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
+            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
               <div className="flex items-center justify-between border-b border-slate-700/80 pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center font-black text-sm">
                     C
                   </div>
                   <div>
                     <h3 className="font-extrabold text-sm tracking-tight text-white">DIGITAL GATE PASS</h3>
-                    <p className="text-[10px] text-blue-300 uppercase">CampusOS Verified</p>
+                    <p className="text-[10px] text-teal-300 uppercase">CampusOS Verified</p>
                   </div>
                 </div>
                 <StatusBadge status="Approved" />
@@ -167,7 +183,7 @@ export const GatePassPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase font-semibold">Student ID / Roll No</p>
-                    <p className="font-mono text-blue-300 font-bold">{user?._id || user?.id || '2201105042'} ({user?.rollNo || '2201105042'})</p>
+                    <p className="font-mono text-teal-300 font-bold">{user?._id || user?.id || '2201105042'} ({user?.rollNo || '2201105042'})</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase font-semibold">Hostel & Room</p>
@@ -180,7 +196,7 @@ export const GatePassPage = () => {
               <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs">
                 <div>
                   <p className="text-[10px] text-slate-400 uppercase flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-blue-400" /> Allowed Exit
+                    <Clock className="w-3 h-3 text-teal-400" /> Allowed Exit
                   </p>
                   <p className="font-bold text-slate-100 mt-0.5">{activePass.details.exitTime}</p>
                 </div>

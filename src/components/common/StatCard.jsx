@@ -1,9 +1,9 @@
 import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'blue', trend, onClick }) => {
+export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'teal', trend, onClick }) => {
   const colorMap = {
-    blue: 'bg-blue-50 text-blue-600 border-blue-100',
+    teal: 'bg-teal-50 text-teal-600 border-teal-100',
     emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
     amber: 'bg-amber-50 text-amber-600 border-amber-100',
     rose: 'bg-rose-50 text-rose-600 border-rose-100',
@@ -20,7 +20,7 @@ export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'blue', t
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</span>
-        <div className={`p-2.5 rounded-xl border ${colorMap[color] || colorMap.blue}`}>
+        <div className={`p-2.5 rounded-xl border ${colorMap[color] || colorMap.teal}`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>

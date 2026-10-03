@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { PageHeader } from '../../components/common/PageHeader';
 import { Modal } from '../../components/common/Modal';
+import { VoiceInputButton } from '../../components/common/VoiceInputButton';
 import { Megaphone, Plus, Send, CheckCircle2 } from 'lucide-react';
 
 export const AdminNoticesPage = () => {
@@ -40,7 +41,7 @@ export const AdminNoticesPage = () => {
       >
         <button
           onClick={() => setShowPublishModal(true)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
+          className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition cursor-pointer"
         >
           <Plus className="w-4 h-4" /> Publish New Notice
         </button>
@@ -61,15 +62,19 @@ export const AdminNoticesPage = () => {
           </thead>
           <tbody className="divide-y divide-slate-100 font-medium">
             {notices.map((n) => (
-              <tr key={n.id} className="hover:bg-slate-50">
-                <td className="p-3 font-mono font-bold text-slate-900">{n.id}</td>
-                <td className="p-3 font-bold text-blue-700">{n.department}</td>
+              <tr key={n.id || n.noticeId || n._id} className="hover:bg-slate-50 transition">
+                <td className="p-3 font-mono font-bold text-slate-900">{n.noticeId || n.id}</td>
+                <td className="p-3 font-bold text-teal-700">{n.department}</td>
                 <td className="p-3 text-slate-900 font-bold max-w-sm truncate">{n.title}</td>
                 <td className="p-3 text-slate-600">{n.category}</td>
                 <td className="p-3">
-                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
-                    n.priority === 'Emergency' ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
+                      n.priority === 'Emergency' || n.priority === 'Urgent'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-teal-100 text-teal-800'
+                    }`}
+                  >
                     {n.priority}
                   </span>
                 </td>
@@ -88,16 +93,23 @@ export const AdminNoticesPage = () => {
       >
         <form onSubmit={handlePublish} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Notice Title
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block font-bold text-slate-700 uppercase tracking-wider">
+                Notice Title
+              </label>
+              <VoiceInputButton
+                currentValue={title}
+                onTranscript={(text) => setTitle(text)}
+                mode="append"
+              />
+            </div>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Mid-Semester Examination Schedule"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+              placeholder="e.g. Mid-Semester Examination Schedule & Guidelines"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-teal-500 transition"
             />
           </div>
 
@@ -116,6 +128,7 @@ export const AdminNoticesPage = () => {
                 <option value="Academic Registrar">Academic Registrar</option>
                 <option value="Innovation Cell">Innovation Cell</option>
                 <option value="Accounts & Finance">Accounts & Finance</option>
+                <option value="Campus Security & Proctor">Campus Security & Proctor</option>
               </select>
             </div>
             <div>
@@ -136,16 +149,23 @@ export const AdminNoticesPage = () => {
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Notice Content / Full Details
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block font-bold text-slate-700 uppercase tracking-wider">
+                Notice Content / Full Details
+              </label>
+              <VoiceInputButton
+                currentValue={content}
+                onTranscript={(text) => setContent(text)}
+                mode="append"
+              />
+            </div>
             <textarea
               rows={4}
               required
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write the full circular announcement body..."
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+              placeholder="Write the full circular announcement body. You can also dictate using voice..."
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-teal-500 transition"
             />
           </div>
 
@@ -153,13 +173,13 @@ export const AdminNoticesPage = () => {
             <button
               type="button"
               onClick={() => setShowPublishModal(false)}
-              className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold"
+              className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-blue-500/20"
+              className="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-teal-500/20 hover:bg-teal-700 transition cursor-pointer"
             >
               <Send className="w-4 h-4" /> Broadcast Notice Campus-Wide
             </button>

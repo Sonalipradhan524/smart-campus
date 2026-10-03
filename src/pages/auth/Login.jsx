@@ -6,14 +6,14 @@ export const Login = () => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans">
       {/* Background Accents */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* Main Container */}
       <div className="max-w-4xl mx-auto w-full space-y-8 relative z-10 animate-fade-in">
         {/* Header */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest shadow-inner">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest shadow-inner">
             <Sparkles className="w-3.5 h-3.5" /> BPUT Autonomous CampusOS Platform
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -27,13 +27,13 @@ export const Login = () => {
         {/* 3 Role Portal Selection Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Student Card */}
-          <div className="bg-slate-800/80 backdrop-blur-xl border border-slate-700/80 hover:border-blue-500/80 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 transition-all group">
+          <div className="bg-slate-800/80 backdrop-blur-xl border border-slate-700/80 hover:border-teal-500/80 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:shadow-teal-500/10 transition-all group">
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center font-bold text-xl group-hover:scale-105 transition duration-200 shadow-inner">
+              <div className="w-14 h-14 rounded-2xl bg-teal-600/20 border border-teal-500/30 text-teal-400 flex items-center justify-center font-bold text-xl group-hover:scale-105 transition duration-200 shadow-inner">
                 <GraduationCap className="w-8 h-8" />
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Portal 01</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">Portal 01</span>
                 <h3 className="text-xl font-bold text-white">Student Portal</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
                   Access course enrollment, gate passes, hostel permits, timetable, mess menus, and AI assistant.
@@ -42,15 +42,15 @@ export const Login = () => {
 
               <div className="space-y-2 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                  <CheckCircle className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" />
                   <span>Digital QR Gate Passes</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                  <CheckCircle className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" />
                   <span>Leave & Certificate Requests</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                  <CheckCircle className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" />
                   <span>24/7 CampusAI Support</span>
                 </div>
               </div>
@@ -59,7 +59,7 @@ export const Login = () => {
             <div className="space-y-2 pt-4 border-t border-slate-700/60">
               <Link
                 to="/student/login"
-                className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition"
+                className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-teal-600/20 transition"
               >
                 <span>Login as Student</span>
                 <ArrowRight className="w-4 h-4" />

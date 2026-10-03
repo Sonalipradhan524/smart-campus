@@ -64,7 +64,7 @@ export const StudentRegister = () => {
       <div className="w-full max-w-3xl bg-slate-800/90 backdrop-blur-xl border border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6 relative my-8 animate-fade-in">
         {/* Header */}
         <div className="flex items-center gap-4 pb-4 border-b border-slate-700/80">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-teal-600/20 border border-teal-500/30 text-teal-400 flex items-center justify-center flex-shrink-0">
             <GraduationCap className="w-7 h-7" />
           </div>
           <div>
@@ -91,12 +91,12 @@ export const StudentRegister = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section 1: Basic & Credentials */}
           <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" /> Basic Profile & Login Credentials
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Full Name <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Full Name <span className="text-teal-400">*</span></label>
                 <input
                   type="text"
                   name="name"
@@ -104,12 +104,12 @@ export const StudentRegister = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Sonali Pradhan"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Student ID / Roll Number <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Student ID / Roll Number <span className="text-teal-400">*</span></label>
                 <input
                   type="text"
                   name="studentId"
@@ -117,12 +117,12 @@ export const StudentRegister = () => {
                   value={formData.studentId}
                   onChange={handleChange}
                   placeholder="e.g. 2201105042"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Email Address <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Email Address <span className="text-teal-400">*</span></label>
                 <input
                   type="email"
                   name="email"
@@ -130,12 +130,12 @@ export const StudentRegister = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="student@bput.ac.in"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Phone Number <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Phone Number <span className="text-teal-400">*</span></label>
                 <input
                   type="tel"
                   name="phone"
@@ -143,12 +143,12 @@ export const StudentRegister = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Password <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Password <span className="text-teal-400">*</span></label>
                 <input
                   type="password"
                   name="password"
@@ -156,12 +156,12 @@ export const StudentRegister = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 6 characters"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Confirm Password <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Confirm Password <span className="text-teal-400">*</span></label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -169,7 +169,7 @@ export const StudentRegister = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter password"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
             </div>
@@ -177,17 +177,17 @@ export const StudentRegister = () => {
 
           {/* Section 2: Academic Details */}
           <div className="space-y-4 pt-2 border-t border-slate-700/60">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
               <Building className="w-3.5 h-3.5" /> Academic Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Department <span className="text-blue-400">*</span></label>
+                <label className="text-xs font-semibold text-slate-300">Department <span className="text-teal-400">*</span></label>
                 <select
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-teal-500 transition"
                 >
                   <option value="Computer Science & Engineering">Computer Science & Engg</option>
                   <option value="Electronics & Communication">Electronics & Comm</option>
@@ -203,7 +203,7 @@ export const StudentRegister = () => {
                   name="course"
                   value={formData.course}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-teal-500 transition"
                 >
                   <option value="B.Tech">B.Tech</option>
                   <option value="M.Tech">M.Tech</option>
@@ -218,7 +218,7 @@ export const StudentRegister = () => {
                   name="semester"
                   value={formData.semester}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-teal-500 transition"
                 >
                   <option value="1st Semester">1st Semester</option>
                   <option value="2nd Semester">2nd Semester</option>
@@ -239,7 +239,7 @@ export const StudentRegister = () => {
                   value={formData.section}
                   onChange={handleChange}
                   placeholder="Section A"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
@@ -251,7 +251,7 @@ export const StudentRegister = () => {
                   value={formData.admissionYear}
                   onChange={handleChange}
                   placeholder="2026"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
@@ -261,7 +261,7 @@ export const StudentRegister = () => {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-teal-500 transition"
                 >
                   <option value="Female">Female</option>
                   <option value="Male">Male</option>
@@ -273,7 +273,7 @@ export const StudentRegister = () => {
 
           {/* Section 3: Hostel & Guardian */}
           <div className="space-y-4 pt-2 border-t border-slate-700/60">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
               <Home className="w-3.5 h-3.5" /> Hostel & Emergency Contact
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -285,7 +285,7 @@ export const StudentRegister = () => {
                   value={formData.hostel}
                   onChange={handleChange}
                   placeholder="Kalpana Chawla Hall (Block B)"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
@@ -297,7 +297,7 @@ export const StudentRegister = () => {
                   value={formData.roomNo}
                   onChange={handleChange}
                   placeholder="B-204"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
@@ -309,7 +309,7 @@ export const StudentRegister = () => {
                   value={formData.guardianName}
                   onChange={handleChange}
                   placeholder="Parent / Guardian Name"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
 
@@ -321,7 +321,7 @@ export const StudentRegister = () => {
                   value={formData.guardianPhone}
                   onChange={handleChange}
                   placeholder="+91 98765 00000"
-                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500 transition"
                 />
               </div>
             </div>
@@ -330,7 +330,7 @@ export const StudentRegister = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-teal-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? 'Saving Student Record...' : 'Complete Student Registration'}
             <ArrowRight className="w-4 h-4" />
@@ -340,7 +340,7 @@ export const StudentRegister = () => {
         <div className="text-center pt-2 border-t border-slate-700/60">
           <p className="text-xs text-slate-400">
             Already registered?{' '}
-            <Link to="/student/login" className="font-bold text-blue-400 hover:underline">
+            <Link to="/student/login" className="font-bold text-teal-400 hover:underline">
               Back to Student Login
             </Link>
           </p>

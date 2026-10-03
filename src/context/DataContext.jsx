@@ -12,6 +12,7 @@ import {
   aiAPI,
   apiHealthCheck,
 } from '../services/api';
+import { triageComplaint } from '../utils/triageHelper';
 const sampleAIAnswers = [
   {
     keywords: ["gate pass", "outing", "exit", "leave hostel"],
@@ -37,10 +38,73 @@ const sampleAIAnswers = [
     actionLink: "/student/complaints",
     actionLabel: "Lodge a Complaint",
   },
+  {
+    keywords: ["mess", "menu", "food", "dinner", "lunch", "breakfast"],
+    response: `Today's Mess Menu (Kalpana Chawla Hall):\n- **Breakfast**: Puri, Ghuguni, Tea/Coffee\n- **Lunch**: Rice, Dalma, Saga Bhaja, Mushroom Curry\n- **Snacks**: Vada, Tea\n- **Dinner**: Roti, Chicken Curry / Kadai Paneer, Rice`,
+    actionLink: "/student/mess",
+    actionLabel: "View Full Mess Menu",
+  },
 ];
 
 const DataContext = createContext();
 
+
+const formatMessMenuData = (raw) => {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const todayDay = days[new Date().getDay()];
+
+  const menu = raw?.menu || {
+    Monday: { breakfast: 'Idli, Sambar, Coconut Chutney, Tea/Coffee', lunch: 'Rice, Dal, Alu Bhaja, Paneer Curry, Curd', snacks: 'Samosa, Black Tea', dinner: 'Roti, Mixed Veg, Dal Fry, Kheer' },
+    Tuesday: { breakfast: 'Puri, Ghuguni, Tea/Coffee', lunch: 'Rice, Dalma, Saga Bhaja, Mushroom Curry', snacks: 'Vada, Tea', dinner: 'Roti, Chicken Curry / Kadai Paneer, Rice' },
+    Wednesday: { breakfast: 'Upma, Ghuguni, Tea', lunch: 'Rice, Dal, Fish Curry / Soyabean, Dahi Baigana', snacks: 'Biscuits, Coffee', dinner: 'Roti, Dal, Egg Curry / Paneer Butter Masala' },
+    Thursday: { breakfast: 'Dosa, Sambar, Chutney, Tea', lunch: 'Rice, Kanika, Chana Masala, Papad, Sweet', snacks: 'Pakoda, Tea', dinner: 'Roti, Dal Fry, Alu Gobi' },
+    Friday: { breakfast: 'Poha, Sev, Tea/Coffee', lunch: 'Rice, Dal, Egg Bhurji / Kadhi Pakoda, Chips', snacks: 'Bread Chop, Tea', dinner: 'Roti, Chicken Biryani / Veg Biryani, Raita' },
+    Saturday: { breakfast: 'Chakuli Pitha, Ghuguni, Tea', lunch: 'Rice, Dal, Baigana Bhaja, Veg Tadka', snacks: 'Jhalmuri, Coffee', dinner: 'Roti, Dal Makhani, Mix Veg' },
+    Sunday: { breakfast: 'Chole Bhature, Tea/Coffee', lunch: 'Special Veg/Non-Veg Thali, Ice Cream', snacks: 'Tea/Coffee', dinner: 'Roti, Dal, Veg Korma / Paneer Tikka' }
+  };
+
+  const timings = raw?.timings || {
+    breakfast: '07:30 AM - 09:15 AM',
+    lunch: '12:30 PM - 02:15 PM',
+    snacks: '05:00 PM - 06:15 PM',
+    dinner: '08:00 PM - 09:45 PM'
+  };
+
+  const todayMenu = menu[todayDay] || menu.Wednesday || menu.Tuesday || {};
+
+  return {
+    todayDay,
+    hostel: raw?.hostel || 'Kalpana Chawla Hall (Block B)',
+    provider: raw?.provider || 'Annapurna Catering Services',
+    breakfast: {
+      title: todayMenu.breakfast || 'Puri, Ghuguni, Tea/Coffee',
+      time: timings.breakfast || '07:30 AM - 09:15 AM',
+      sides: 'Served hot at Central Dining Hall',
+    },
+    lunch: {
+      title: todayMenu.lunch || 'Rice, Dalma, Saga Bhaja, Mushroom Curry',
+      time: timings.lunch || '12:30 PM - 02:15 PM',
+      sides: 'Includes Fresh Salad, Papad & Curd',
+    },
+    snacks: {
+      title: todayMenu.snacks || 'Samosa / Vada & Tea',
+      time: timings.snacks || '05:00 PM - 06:15 PM',
+      sides: 'Evening Refreshment Counter',
+    },
+    dinner: {
+      title: todayMenu.dinner || 'Roti, Dal, Special Veg/Non-Veg Curry',
+      time: timings.dinner || '08:00 PM - 09:45 PM',
+      sides: 'Dessert / Ice Cream on Special Days',
+    },
+    weeklyHighlights: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((d) => ({
+      day: d,
+      lunch: menu[d]?.lunch || 'Rice, Dal & Special Curry',
+      dinner: menu[d]?.dinner || 'Roti & Dal Fry',
+    })),
+    feedbacks: raw?.feedback || [],
+    raw: raw || {},
+  };
+};
 
 export const DataProvider = ({ children }) => {
   const [requests, setRequests] = useState([]);
@@ -66,15 +130,7 @@ export const DataProvider = ({ children }) => {
     roommates: [],
     rules: [],
   });
-  const [messMenu, setMessMenu] = useState({
-    todayDay: 'Tuesday',
-    breakfast: { title: 'No meal published', time: '' },
-    lunch: { title: 'No meal published', time: '' },
-    snacks: { title: 'No meal published', time: '' },
-    dinner: { title: 'No meal published', time: '' },
-    weeklyHighlights: [],
-    feedbacks: [],
-  });
+  const [messMenu, setMessMenu] = useState(() => formatMessMenuData(null));
   const [fees, setFees] = useState({
     totalFee: 0,
     paidFee: 0,
@@ -82,6 +138,7 @@ export const DataProvider = ({ children }) => {
     dueDate: '-',
     transactions: [],
   });
+  const [foodWasteLogs, setFoodWasteLogs] = useState([]);
   const [analytics, setAnalytics] = useState({
     totalStudents: 0,
     pendingRequestsCount: 0,
@@ -114,7 +171,7 @@ export const DataProvider = ({ children }) => {
       }
 
       // Fetch endpoints safely
-      const [reqData, cmpData, notData, ntfData, attData, ttData, hstData, messData] =
+      const [reqData, cmpData, notData, ntfData, attData, ttData, hstData, messData, fwData] =
         await Promise.allSettled([
           requestsAPI.getAll(),
           complaintsAPI.getAll(),
@@ -124,6 +181,7 @@ export const DataProvider = ({ children }) => {
           timetableAPI.getAll(),
           hostelAPI.get(),
           messAPI.get(),
+          messAPI.getFoodWaste(),
         ]);
 
       if (reqData.status === 'fulfilled') setRequests(reqData.value || []);
@@ -133,7 +191,8 @@ export const DataProvider = ({ children }) => {
       if (attData.status === 'fulfilled' && attData.value) setAttendance(attData.value);
       if (ttData.status === 'fulfilled') setTimetable(ttData.value || []);
       if (hstData.status === 'fulfilled' && hstData.value) setHostel(hstData.value);
-      if (messData.status === 'fulfilled' && messData.value) setMessMenu(messData.value);
+      if (messData.status === 'fulfilled' && messData.value) setMessMenu(formatMessMenuData(messData.value));
+      if (fwData.status === 'fulfilled') setFoodWasteLogs(fwData.value || []);
 
       setLoading(false);
     } catch (err) {
@@ -279,26 +338,39 @@ export const DataProvider = ({ children }) => {
       showToast(`Grievance ${newCmp.cmpId || ''} logged successfully!`, 'success');
       return newCmp;
     } catch (err) {
-      const newCmpId = `CMP-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+      const triage = triageComplaint(complaintData.title, complaintData.description, complaintData.category);
+      const newCmpId = `CMP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const currentDateStr = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
       const newCmp = {
         id: newCmpId,
         cmpId: newCmpId,
         title: complaintData.title,
-        category: complaintData.category || 'General',
-        location: complaintData.location || 'Hostel Block B',
-        submittedDate: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
-        priority: complaintData.priority || 'Medium',
+        category: triage.category,
+        location: complaintData.location || 'Campus Premises',
+        submittedDate: currentDateStr,
+        priority: triage.priority,
         status: 'Submitted',
-        assignedTo: 'AI Maintenance Cell',
+        assignedTo: 'Unassigned',
+        assignedDept: triage.targetDept,
         description: complaintData.description,
+        imagePreview: complaintData.imagePreview || null,
         aiMetadata: {
-          detectedCategory: complaintData.category,
-          confidence: '97%',
-          detectedPriority: complaintData.priority,
-          targetDept: 'Maintenance',
-          estimatedResolution: '4 Hours',
+          detectedCategory: triage.category,
+          confidence: 'High',
+          detectedPriority: triage.priority,
+          targetDept: triage.targetDept,
+          estimatedResolution: triage.estimatedResolution,
+          matchedKeywords: triage.matchedKeywords || [],
+          routingLogic: triage.routingLogic,
         },
-        updates: [{ date: 'Just now', note: 'Grievance logged.' }],
+        updates: [
+          {
+            status: 'Submitted',
+            date: currentDateStr,
+            note: `Grievance submitted. Routed to ${triage.targetDept}.`,
+            updatedBy: 'Student',
+          },
+        ],
       };
       setComplaints((prev) => [newCmp, ...prev]);
       showToast(`Grievance ${newCmpId} logged!`, 'success');
@@ -328,18 +400,105 @@ export const DataProvider = ({ children }) => {
     showToast(`Request marked as ${newStatus}!`, 'success');
   };
 
-  const updateComplaintStatus = async (id, newStatus, staffName) => {
+  const updateComplaintStatus = async (id, statusOrPayload, staffName = '', note = '') => {
     try {
-      await complaintsAPI.updateStatus(id, newStatus, staffName);
-    } catch (e) {}
-    setComplaints((prev) =>
-      prev.map((c) =>
-        c.id === id || c.cmpId === id
-          ? { ...c, status: newStatus, assignedTo: staffName || c.assignedTo }
-          : c
-      )
-    );
-    showToast(`Complaint updated to ${newStatus}.`, 'info');
+      const payload =
+        typeof statusOrPayload === 'object' && statusOrPayload !== null
+          ? statusOrPayload
+          : { status: statusOrPayload, assignedTo: staffName, note };
+      const updated = await complaintsAPI.updateStatus(id, payload);
+      setComplaints((prev) =>
+        prev.map((c) => {
+          if (c.id === id || c.cmpId === id || c._id === id) {
+            return updated && updated._id ? updated : {
+              ...c,
+              status: payload.status || c.status,
+              assignedTo: payload.assignedTo || c.assignedTo,
+              category: payload.category || c.category,
+              assignedDept: payload.assignedDept || c.assignedDept,
+              updates: [
+                ...(c.updates || []),
+                {
+                  status: payload.status || c.status,
+                  date: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
+                  note: payload.note || `Status updated to ${payload.status || c.status}.`,
+                  updatedBy: payload.updatedBy || 'Campus Administrator',
+                },
+              ],
+            };
+          }
+          return c;
+        })
+      );
+      showToast(`Complaint status updated to ${payload.status || 'updated'}.`, 'info');
+    } catch (e) {
+      const newStatus = typeof statusOrPayload === 'string' ? statusOrPayload : statusOrPayload.status;
+      setComplaints((prev) =>
+        prev.map((c) =>
+          c.id === id || c.cmpId === id || c._id === id
+            ? {
+                ...c,
+                status: newStatus || c.status,
+                assignedTo: staffName || (typeof statusOrPayload === 'object' ? statusOrPayload.assignedTo : c.assignedTo),
+                updates: [
+                  ...(c.updates || []),
+                  {
+                    status: newStatus || c.status,
+                    date: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
+                    note: note || `Status updated to ${newStatus}.`,
+                    updatedBy: 'Campus Administrator',
+                  },
+                ],
+              }
+            : c
+        )
+      );
+      showToast(`Complaint updated to ${newStatus}.`, 'info');
+    }
+  };
+
+  // Food Waste Operations
+  const addFoodWasteRecord = async (formData) => {
+    try {
+      const newRecord = await messAPI.createFoodWaste(formData);
+      setFoodWasteLogs((prev) => [newRecord, ...prev]);
+      showToast('Food waste record logged successfully!', 'success');
+      return newRecord;
+    } catch (err) {
+      const prepared = Number(formData.foodPreparedKg) || 0;
+      const wasted = Number(formData.foodWastedKg) || 0;
+      const wastePercentage = prepared > 0 ? Number(((wasted / prepared) * 100).toFixed(1)) : 0;
+      const newRecord = {
+        _id: `mem_fw_${Date.now()}`,
+        id: `FW-${Date.now().toString().slice(-6)}`,
+        logId: `FW-${Date.now().toString().slice(-6)}`,
+        date: formData.date || new Date().toISOString().split('T')[0],
+        mealType: formData.mealType || 'Lunch',
+        canteenName: formData.canteenName || 'Central Dining Hall / Mess',
+        expectedStudents: Number(formData.expectedStudents) || 0,
+        actualStudentsServed: Number(formData.actualStudentsServed) || 0,
+        foodPreparedKg: prepared,
+        foodWastedKg: wasted,
+        wastePercentage,
+        notes: formData.notes || '',
+        loggedBy: 'Campus Administrator',
+        createdAt: new Date().toISOString(),
+      };
+      setFoodWasteLogs((prev) => [newRecord, ...prev]);
+      showToast('Food waste record logged!', 'success');
+      return newRecord;
+    }
+  };
+
+  const deleteFoodWasteRecord = async (id) => {
+    try {
+      await messAPI.deleteFoodWaste(id);
+      setFoodWasteLogs((prev) => prev.filter((f) => f._id !== id && f.id !== id && f.logId !== id));
+      showToast('Record deleted.', 'info');
+    } catch (err) {
+      setFoodWasteLogs((prev) => prev.filter((f) => f._id !== id && f.id !== id && f.logId !== id));
+      showToast('Record deleted.', 'info');
+    }
   };
 
   const publishNotice = async (noticeObj) => {
@@ -395,7 +554,11 @@ export const DataProvider = ({ children }) => {
   const getAIResponse = async (userPrompt) => {
     try {
       const data = await aiAPI.chat(userPrompt);
-      return data;
+      return {
+        response: data.response || data.reply,
+        reply: data.reply || data.response,
+        poweredBy: data.source === 'gemini-ai' ? 'Google Gemini 1.5 Flash' : 'CampusOS Context Engine',
+      };
     } catch (err) {
       console.warn('[CampusAI] API error, fallback to local engine:', err);
       const promptLower = userPrompt.toLowerCase();
@@ -409,6 +572,51 @@ export const DataProvider = ({ children }) => {
         actionLink: '/student/services',
         actionLabel: 'Explore Services',
       };
+    }
+  };
+
+  const refreshTimetable = async (params = {}) => {
+    try {
+      const data = await timetableAPI.getAll(params);
+      setTimetable(data || []);
+      return data;
+    } catch (err) {
+      console.error('Error refreshing timetable:', err);
+    }
+  };
+
+  const addTimetableSlot = async (slotData) => {
+    try {
+      const newSlot = await timetableAPI.create(slotData);
+      setTimetable((prev) => [...prev, newSlot]);
+      showToast('Timetable class slot added successfully!', 'success');
+      return newSlot;
+    } catch (err) {
+      showToast(err.message || 'Failed to add timetable slot', 'error');
+      throw err;
+    }
+  };
+
+  const updateTimetableSlot = async (id, slotData) => {
+    try {
+      const updated = await timetableAPI.update(id, slotData);
+      setTimetable((prev) => prev.map((item) => (item.id === id || item._id === id ? updated : item)));
+      showToast('Timetable slot updated successfully!', 'success');
+      return updated;
+    } catch (err) {
+      showToast(err.message || 'Failed to update timetable slot', 'error');
+      throw err;
+    }
+  };
+
+  const deleteTimetableSlot = async (id) => {
+    try {
+      await timetableAPI.delete(id);
+      setTimetable((prev) => prev.filter((item) => item.id !== id && item._id !== id));
+      showToast('Timetable slot deleted!', 'success');
+    } catch (err) {
+      showToast(err.message || 'Failed to delete timetable slot', 'error');
+      throw err;
     }
   };
 
@@ -438,10 +646,17 @@ export const DataProvider = ({ children }) => {
         markNotificationRead,
         updateRequestStatus,
         updateComplaintStatus,
+        foodWasteLogs,
+        addFoodWasteRecord,
+        deleteFoodWasteRecord,
         publishNotice,
         submitMessFeedback,
         payFeeDemo,
         getAIResponse,
+        refreshTimetable,
+        addTimetableSlot,
+        updateTimetableSlot,
+        deleteTimetableSlot,
       }}
     >
       {children}

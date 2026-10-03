@@ -30,6 +30,7 @@ import { NoticesPage } from './pages/student/NoticesPage';
 import { NotificationsPage } from './pages/student/NotificationsPage';
 import { FeesPage } from './pages/student/FeesPage';
 import { CampusAIAssistant } from './pages/student/CampusAIAssistant';
+import { CampusBeaconPage } from './pages/student/CampusBeaconPage';
 import { StudentProfilePage } from './pages/student/StudentProfilePage';
 
 // Teacher / Faculty Pages
@@ -55,6 +56,13 @@ import { AdminFeesPage } from './pages/admin/AdminFeesPage';
 import { AdminAnalyticsPage } from './pages/admin/AdminAnalyticsPage';
 import { AdminNotificationsPage } from './pages/admin/AdminNotificationsPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
+import { AdminDepartmentsPage } from './pages/admin/AdminDepartmentsPage';
+import { AdminCoursesPage } from './pages/admin/AdminCoursesPage';
+import { AdminSubjectsPage } from './pages/admin/AdminSubjectsPage';
+import { AdminClassesPage } from './pages/admin/AdminClassesPage';
+import { AdminWorkflowCenterPage } from './pages/admin/AdminWorkflowCenterPage';
+import { AdminAuditLogsPage } from './pages/admin/AdminAuditLogsPage';
+import { FaceAttendanceHub } from './pages/faceAttendance/FaceAttendanceHub';
 
 export default function App() {
   return (
@@ -89,11 +97,14 @@ export default function App() {
               <Route path="mess" element={<MessPage />} />
               <Route path="complaints" element={<ComplaintsPage />} />
               <Route path="attendance" element={<AttendancePage />} />
+              <Route path="face-attendance" element={<FaceAttendanceHub />} />
               <Route path="timetable" element={<TimetablePage />} />
               <Route path="notices" element={<NoticesPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="fees" element={<FeesPage />} />
               <Route path="assistant" element={<CampusAIAssistant />} />
+              <Route path="beacon" element={<CampusBeaconPage />} />
+              <Route path="emergency" element={<CampusBeaconPage />} />
               <Route path="profile" element={<StudentProfilePage />} />
             </Route>
 
@@ -109,12 +120,15 @@ export default function App() {
               <Route index element={<TeacherDashboard />} />
               <Route path="classes" element={<TeacherClassesPage />} />
               <Route path="attendance" element={<TeacherAttendancePage />} />
+              <Route path="face-attendance" element={<FaceAttendanceHub />} />
               <Route path="students" element={<TeacherStudentsPage />} />
               <Route path="timetable" element={<TeacherTimetablePage />} />
               <Route path="assignments" element={<TeacherClassesPage />} />
               <Route path="requests" element={<TeacherRequestsPage />} />
               <Route path="notices" element={<TeacherNoticesPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="beacon" element={<CampusBeaconPage />} />
+              <Route path="emergency" element={<CampusBeaconPage />} />
               <Route path="profile" element={<StudentProfilePage />} />
             </Route>
 
@@ -132,14 +146,25 @@ export default function App() {
               <Route path="complaints" element={<AdminComplaintsPage />} />
               <Route path="students" element={<AdminStudentsPage />} />
               <Route path="teachers" element={<AdminTeachersPage />} />
+              <Route path="departments" element={<AdminDepartmentsPage />} />
+              <Route path="courses" element={<AdminCoursesPage />} />
+              <Route path="subjects" element={<AdminSubjectsPage />} />
+              <Route path="classes" element={<AdminClassesPage />} />
+              <Route path="sections" element={<AdminClassesPage />} />
               <Route path="attendance" element={<AdminAttendancePage />} />
+              <Route path="face-attendance" element={<FaceAttendanceHub />} />
               <Route path="timetable" element={<AdminTimetablePage />} />
               <Route path="notices" element={<AdminNoticesPage />} />
               <Route path="hostel" element={<AdminHostelMessPage />} />
+              <Route path="hostels" element={<AdminHostelMessPage />} />
               <Route path="mess" element={<AdminHostelMessPage />} />
               <Route path="fees" element={<AdminFeesPage />} />
               <Route path="analytics" element={<AdminAnalyticsPage />} />
+              <Route path="workflows" element={<AdminWorkflowCenterPage />} />
+              <Route path="audit-logs" element={<AdminAuditLogsPage />} />
               <Route path="notifications" element={<AdminNotificationsPage />} />
+              <Route path="beacon" element={<CampusBeaconPage />} />
+              <Route path="emergency" element={<CampusBeaconPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Route>
 

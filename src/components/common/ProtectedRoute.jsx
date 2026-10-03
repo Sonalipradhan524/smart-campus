@@ -34,14 +34,14 @@ export const ProtectedRoute = ({ allowedRoles, children }) => {
           </p>
 
           <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/60 text-xs text-slate-300 flex items-center justify-center gap-2">
-            {role === 'admin' ? <ShieldCheck className="w-4 h-4 text-blue-400" /> : role === 'teacher' ? <UserCheck className="w-4 h-4 text-indigo-400" /> : <GraduationCap className="w-4 h-4 text-emerald-400" />}
+            {role === 'admin' ? <ShieldCheck className="w-4 h-4 text-teal-400" /> : role === 'teacher' ? <UserCheck className="w-4 h-4 text-indigo-400" /> : <GraduationCap className="w-4 h-4 text-emerald-400" />}
             <span>Authenticated as: <strong className="text-white">{user.name}</strong></span>
           </div>
 
           <div className="pt-2">
             <Link
               to={getTargetRoute(role)}
-              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 hover:opacity-95 transition"
+              className="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-indigo-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 hover:opacity-95 transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Return to {role.toUpperCase()} Portal</span>

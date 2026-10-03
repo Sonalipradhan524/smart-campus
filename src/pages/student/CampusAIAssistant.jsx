@@ -88,7 +88,7 @@ export const CampusAIAssistant = () => {
               <div
                 className={`max-w-lg p-4 rounded-2xl text-xs sm:text-sm leading-relaxed space-y-2 ${
                   m.sender === 'user'
-                    ? 'bg-blue-600 text-white font-medium rounded-tr-xs'
+                    ? 'bg-teal-600 text-white font-medium rounded-tr-xs'
                     : 'bg-slate-100/80 text-slate-800 border border-slate-200/80 rounded-tl-xs'
                 }`}
               >
@@ -104,7 +104,7 @@ export const CampusAIAssistant = () => {
                   <div className="pt-2">
                     <Link
                       to={m.actionLink}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-bold shadow-xs transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 text-white hover:bg-teal-700 rounded-xl text-xs font-bold shadow-xs transition"
                     >
                       <span>{m.actionLabel}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -145,7 +145,7 @@ export const CampusAIAssistant = () => {
                 key={p}
                 disabled={isThinking}
                 onClick={() => handleSendMessage(p)}
-                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 text-xs font-medium whitespace-nowrap transition disabled:opacity-50"
+                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 text-xs font-medium whitespace-nowrap transition disabled:opacity-50"
               >
                 {p}
               </button>
@@ -167,12 +167,12 @@ export const CampusAIAssistant = () => {
             disabled={isThinking}
             onChange={(e) => setInputMsg(e.target.value)}
             placeholder="Ask CampusAI about gate passes, complaints, mess menu..."
-            className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm outline-none focus:bg-white focus:border-blue-500 transition disabled:opacity-50"
+            className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm outline-none focus:bg-white focus:border-teal-500 transition disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={isThinking || !inputMsg.trim()}
-            className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl hover:opacity-95 shadow-md shadow-blue-500/20 transition flex-shrink-0 disabled:opacity-50"
+            className="p-3 bg-gradient-to-r from-teal-600 to-indigo-600 text-white rounded-2xl hover:opacity-95 shadow-md shadow-teal-500/20 transition flex-shrink-0 disabled:opacity-50"
           >
             <Send className="w-5 h-5" />
           </button>

@@ -9,7 +9,11 @@ import { Timetable } from '../models/Timetable.js';
 import { Notification } from '../models/Notification.js';
 import { Hostel } from '../models/Hostel.js';
 import { Mess } from '../models/Mess.js';
+import { FoodWaste } from '../models/FoodWaste.js';
 import { Fee } from '../models/Fee.js';
+import { AuditLog } from '../models/AuditLog.js';
+import { realTimetableEntries } from './realTimetableData.js';
+import { serverTriageComplaint } from './triageHelper.js';
 
 let isMongoConnected = false;
 
@@ -30,12 +34,13 @@ const memoryStore = {
       role: 'student',
       rollNo: '2201105042',
       studentId: '2201105042',
-      department: 'Computer Science & Engineering',
+      department: 'CSE',
+      branch: 'CSE',
       course: 'B.Tech',
-      semester: '6th Semester',
+      semester: '3rd Semester',
       section: 'Section A',
-      admissionYear: '2022',
-      batch: '2022 - 2026',
+      admissionYear: '2025',
+      batch: '2025 - 2029',
       cgpa: '8.84',
       hostel: 'Kalpana Chawla Hall (Block B)',
       roomNo: 'B-204',
@@ -136,7 +141,14 @@ const memoryStore = {
         { id: 'TXN-90112', title: 'Semester & Hostel Admission Fee', date: 'Jan 10, 2026', amount: 65000, method: 'Online NetBanking', status: 'Completed' }
       ]
     }
-  }
+  },
+  timetable: [...realTimetableEntries],
+  departments: [],
+  courses: [],
+  subjects: [],
+  classSections: [],
+  rooms: [],
+  auditLogs: []
 };
 
 // Data Service helper matching Mongo interface & fallback
@@ -367,81 +379,139 @@ export const DataStore = {
     if (isMongoConnected) {
       return await Complaint.find(query).sort({ createdAt: -1 });
     }
-    return memoryStore.complaints.filter(c => {
-      if (query.userId && c.userId !== query.userId) return false;
+    return (memoryStore.complaints || []).filter(c => {
+      if (query.userId && c.userId && c.userId.toString() !== query.userId.toString()) return false;
       if (query.status && c.status !== query.status) return false;
       return true;
     });
   },
 
   async createComplaint(data) {
-    if (isMongoConnected) {
-      return await Complaint.create(data);
-    }
-    const newComp = {
-      _id: `mem_comp_${Date.now()}`,
-      userId: data.userId,
-      studentName: data.studentName,
-      rollNo: data.rollNo,
-      hostel: data.hostel,
-      roomNo: data.roomNo,
-      category: data.category,
+    const triage = serverTriageComplaint(data.title || '', data.description || '', data.category || '');
+    const cmpId = data.cmpId || `CMP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const formattedDate = data.submittedDate || new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    const assignedDept = data.assignedDept || triage.targetDept || 'Campus Administrator';
+    const assignedTo = data.assignedTo || 'Unassigned';
+    const priority = data.priority || triage.priority || 'Medium';
+    const category = data.category && data.category !== 'Other' ? data.category : triage.category;
+
+    const complaintPayload = {
+      cmpId,
+      user: data.userId || data.user,
+      userId: data.userId || data.user,
+      studentName: data.studentName || 'Student',
+      rollNo: data.rollNo || '',
+      hostel: data.hostel || 'Campus Hostel',
+      roomNo: data.roomNo || '',
+      category,
       title: data.title,
       description: data.description,
-      priority: data.priority || 'medium',
-      image: data.image || '',
-      status: 'pending',
-      aiClassification: {
-        category: data.category,
-        priority: data.priority || 'medium',
-        suggestedDepartment: `${data.category} Maintenance Dept`,
-        confidence: 0.95
+      location: data.location || 'Campus Premises',
+      priority,
+      status: 'Submitted',
+      assignedTo,
+      assignedDept,
+      imagePreview: data.imagePreview || data.image || null,
+      submittedDate: formattedDate,
+      aiMetadata: {
+        detectedCategory: triage.category,
+        confidence: 'High',
+        detectedPriority: triage.priority,
+        targetDept: triage.targetDept,
+        estimatedResolution: triage.estimatedResolution,
+        matchedKeywords: triage.matchedKeywords || [],
+        routingLogic: triage.routingLogic,
       },
       updates: [
-        { date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), note: 'Complaint logged. Smart AI route assigned to Maintenance Dept.' }
+        {
+          status: 'Submitted',
+          date: formattedDate,
+          note: `Grievance submitted by student. Routed to ${assignedDept} for action.`,
+          updatedBy: data.studentName || 'Student',
+        },
       ],
-      createdAt: new Date().toISOString()
     };
+
+    if (isMongoConnected) {
+      return await Complaint.create(complaintPayload);
+    }
+
+    const newComp = {
+      _id: `mem_comp_${Date.now()}`,
+      id: cmpId,
+      ...complaintPayload,
+      createdAt: new Date().toISOString(),
+    };
+    if (!memoryStore.complaints) memoryStore.complaints = [];
     memoryStore.complaints.unshift(newComp);
     return newComp;
   },
 
-  async updateComplaintStatus(id, status, note = '') {
+  async updateComplaintStatus(id, updateData, noteParam = '', staffNameParam = '', updatedByParam = 'Administrator') {
+    let newStatus = 'In Progress';
+    let note = noteParam;
+    let assignedTo = staffNameParam;
+    let category = null;
+    let assignedDept = null;
+    let updatedBy = updatedByParam;
+
+    if (typeof updateData === 'object' && updateData !== null) {
+      newStatus = updateData.status || newStatus;
+      note = updateData.note !== undefined ? updateData.note : note;
+      assignedTo = updateData.assignedTo !== undefined ? updateData.assignedTo : assignedTo;
+      category = updateData.category || null;
+      assignedDept = updateData.assignedDept || null;
+      updatedBy = updateData.updatedBy || updatedBy;
+    } else if (typeof updateData === 'string') {
+      newStatus = updateData;
+    }
+
+    const currentDateStr = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    const updateHistoryItem = {
+      status: newStatus,
+      date: currentDateStr,
+      note: note || `Status updated to ${newStatus}.`,
+      updatedBy: updatedBy || 'Administrator',
+    };
+
     if (isMongoConnected) {
-      const comp = await Complaint.findById(id);
+      const comp = await Complaint.findById(id) || await Complaint.findOne({ cmpId: id });
       if (!comp) return null;
-      comp.status = status;
-      comp.updates.push({
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        note: note || `Status updated to ${status}.`
-      });
+      comp.status = newStatus;
+      if (assignedTo) comp.assignedTo = assignedTo;
+      if (category) comp.category = category;
+      if (assignedDept) comp.assignedDept = assignedDept;
+      comp.updates.push(updateHistoryItem);
       await comp.save();
 
       await Notification.create({
-        userId: comp.userId,
-        title: `Complaint Status: ${status.toUpperCase()}`,
-        message: `Your complaint "${comp.title}" is now marked as ${status}.`,
+        userId: comp.user || comp.userId,
+        title: `Complaint Status: ${newStatus.toUpperCase()}`,
+        message: `Your grievance "${comp.title}" is now marked as ${newStatus}. ${note ? `Note: ${note}` : ''}`,
         type: 'complaint',
-        link: '/complaints'
+        link: '/student/complaints',
       });
       return comp;
     }
-    const comp = memoryStore.complaints.find(c => c._id === id);
-    if (!comp) return null;
-    comp.status = status;
-    comp.updates.push({
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      note: note || `Status updated to ${status}.`
-    });
 
+    const comp = (memoryStore.complaints || []).find(c => c._id === id || c.id === id || c.cmpId === id);
+    if (!comp) return null;
+    comp.status = newStatus;
+    if (assignedTo) comp.assignedTo = assignedTo;
+    if (category) comp.category = category;
+    if (assignedDept) comp.assignedDept = assignedDept;
+    if (!comp.updates) comp.updates = [];
+    comp.updates.push(updateHistoryItem);
+
+    if (!memoryStore.notifications) memoryStore.notifications = [];
     memoryStore.notifications.unshift({
       _id: `mem_notif_${Date.now()}`,
-      userId: comp.userId,
-      title: `Complaint Status: ${status.toUpperCase()}`,
-      message: `Your complaint "${comp.title}" is now marked as ${status}.`,
+      userId: comp.userId || comp.user,
+      title: `Complaint Status: ${newStatus.toUpperCase()}`,
+      message: `Your grievance "${comp.title}" is now marked as ${newStatus}. ${note ? `Note: ${note}` : ''}`,
       type: 'complaint',
       read: false,
-      date: 'Just now'
+      date: 'Just now',
     });
     return comp;
   },
@@ -536,6 +606,61 @@ export const DataStore = {
     return memoryStore.mess[0];
   },
 
+  // FOOD WASTE MANAGEMENT
+  async getFoodWasteLogs() {
+    if (isMongoConnected) {
+      return await FoodWaste.find().sort({ date: -1, createdAt: -1 });
+    }
+    return (memoryStore.foodWaste || []).sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+  },
+
+  async createFoodWasteLog(data) {
+    const logId = `FW-${Date.now().toString().slice(-6)}`;
+    const prepared = Number(data.foodPreparedKg) || 0;
+    const wasted = Number(data.foodWastedKg) || 0;
+    const wastePercentage = prepared > 0 ? Number(((wasted / prepared) * 100).toFixed(1)) : 0;
+
+    const logPayload = {
+      logId,
+      date: data.date || new Date().toISOString().split('T')[0],
+      mealType: data.mealType || 'Lunch',
+      canteenName: data.canteenName || 'Central Dining Hall / Mess',
+      expectedStudents: Number(data.expectedStudents) || 0,
+      actualStudentsServed: Number(data.actualStudentsServed) || 0,
+      foodPreparedKg: prepared,
+      foodWastedKg: wasted,
+      notes: data.notes || '',
+      loggedBy: data.loggedBy || 'Campus Administration',
+      wastePercentage,
+    };
+
+    if (isMongoConnected) {
+      return await FoodWaste.create(logPayload);
+    }
+
+    const newLog = {
+      _id: `mem_fw_${Date.now()}`,
+      id: logId,
+      ...logPayload,
+      createdAt: new Date().toISOString(),
+    };
+    if (!memoryStore.foodWaste) memoryStore.foodWaste = [];
+    memoryStore.foodWaste.unshift(newLog);
+    return newLog;
+  },
+
+  async deleteFoodWasteLog(id) {
+    if (isMongoConnected) {
+      return await FoodWaste.findByIdAndDelete(id) || await FoodWaste.findOneAndDelete({ logId: id });
+    }
+    if (!memoryStore.foodWaste) return null;
+    const idx = memoryStore.foodWaste.findIndex(f => f._id === id || f.id === id || f.logId === id);
+    if (idx !== -1) {
+      return memoryStore.foodWaste.splice(idx, 1)[0];
+    }
+    return null;
+  },
+
   // FEES
   async getFeeDetails(userId) {
     if (isMongoConnected) {
@@ -612,30 +737,423 @@ export const DataStore = {
   },
 
   async markClassAttendance(sessionData) {
+    const targetDate = sessionData.date || new Date().toISOString().split('T')[0];
+    const subCode = sessionData.subjectCode || sessionData.subject;
+    const sec = sessionData.section || 'Section A';
+
     if (isMongoConnected) {
       const { ClassSessionAttendance } = await import('../models/Attendance.js');
-      return await ClassSessionAttendance.create(sessionData);
+      const existing = await ClassSessionAttendance.findOne({
+        $or: [{ subjectCode: subCode }, { subject: sessionData.subject }],
+        section: sec,
+        date: targetDate,
+      });
+      if (existing && !sessionData.allowUpdate) {
+        return {
+          isDuplicate: true,
+          message: `Attendance has already been recorded for ${sessionData.subject} (${sec}) on ${targetDate}.`,
+          existingSession: existing,
+        };
+      }
+      if (existing && sessionData.allowUpdate) {
+        existing.records = sessionData.records || [];
+        await existing.save();
+        return existing;
+      }
+      return await ClassSessionAttendance.create({ ...sessionData, date: targetDate });
     }
+
+    // Fallback In-Memory check
+    const existingIdx = memoryStore.classSessions.findIndex(
+      (s) =>
+        (s.subjectCode === subCode || s.subject === sessionData.subject) &&
+        s.section === sec &&
+        s.date === targetDate
+    );
+
+    if (existingIdx !== -1 && !sessionData.allowUpdate) {
+      return {
+        isDuplicate: true,
+        message: `Attendance has already been recorded for ${sessionData.subject} (${sec}) on ${targetDate}.`,
+        existingSession: memoryStore.classSessions[existingIdx],
+      };
+    }
+
+    if (existingIdx !== -1 && sessionData.allowUpdate) {
+      memoryStore.classSessions[existingIdx].records = sessionData.records || [];
+      return memoryStore.classSessions[existingIdx];
+    }
+
     const newSession = {
       _id: `mem_session_${Date.now()}`,
       teacherId: sessionData.teacherId,
       teacherName: sessionData.teacherName,
       subject: sessionData.subject,
-      subjectCode: sessionData.subjectCode || 'CSE-301',
+      subjectCode: subCode,
       semester: sessionData.semester || '6th Semester',
-      section: sessionData.section || 'Section A',
-      date: sessionData.date || new Date().toISOString().split('T')[0],
-      records: sessionData.records || []
+      section: sec,
+      date: targetDate,
+      records: sessionData.records || [],
+      createdAt: new Date().toISOString(),
     };
     memoryStore.classSessions.unshift(newSession);
     return newSession;
   },
 
-  async getClassAttendanceHistory(teacherId) {
+  async getClassAttendanceHistory(teacherId, filters = {}) {
+    let sessions = [];
     if (isMongoConnected) {
       const { ClassSessionAttendance } = await import('../models/Attendance.js');
-      return await ClassSessionAttendance.find({ teacherId }).sort({ createdAt: -1 });
+      const query = {};
+      if (teacherId) query.teacherId = teacherId;
+      if (filters.date) query.date = filters.date;
+      if (filters.subject) query.subject = new RegExp(filters.subject, 'i');
+      if (filters.subjectCode) query.subjectCode = filters.subjectCode;
+      if (filters.section) query.section = filters.section;
+      if (filters.semester) query.semester = filters.semester;
+      sessions = await ClassSessionAttendance.find(query).sort({ createdAt: -1 });
+    } else {
+      sessions = memoryStore.classSessions;
+      if (teacherId) {
+        sessions = sessions.filter((s) => s.teacherId === teacherId);
+      }
+      if (filters.date) {
+        sessions = sessions.filter((s) => s.date === filters.date);
+      }
+      if (filters.subject) {
+        const norm = filters.subject.toLowerCase();
+        sessions = sessions.filter(
+          (s) =>
+            (s.subject || '').toLowerCase().includes(norm) ||
+            (s.subjectCode || '').toLowerCase().includes(norm)
+        );
+      }
+      if (filters.section) {
+        sessions = sessions.filter((s) => s.section === filters.section);
+      }
+      if (filters.semester) {
+        sessions = sessions.filter((s) => s.semester === filters.semester);
+      }
     }
-    return memoryStore.classSessions.filter(s => s.teacherId === teacherId);
+    return sessions;
+  },
+
+  async getAdminAttendanceOverview(filters = {}) {
+    let sessions = [];
+    let students = [];
+    if (isMongoConnected) {
+      const { ClassSessionAttendance } = await import('../models/Attendance.js');
+      const query = {};
+      if (filters.date) query.date = filters.date;
+      if (filters.section) query.section = filters.section;
+      if (filters.semester) query.semester = filters.semester;
+      sessions = await ClassSessionAttendance.find(query).sort({ createdAt: -1 });
+      students = await User.find({ role: 'student' }).select('-password');
+    } else {
+      sessions = memoryStore.classSessions;
+      if (filters.date) sessions = sessions.filter((s) => s.date === filters.date);
+      if (filters.section) sessions = sessions.filter((s) => s.section === filters.section);
+      if (filters.semester) sessions = sessions.filter((s) => s.semester === filters.semester);
+      students = memoryStore.users.filter((u) => u.role === 'student');
+    }
+
+    if (filters.department) {
+      const depNorm = filters.department.toLowerCase();
+      students = students.filter(
+        (s) => (s.department || s.branch || '').toLowerCase().includes(depNorm)
+      );
+    }
+
+    let totalRecordedPresent = 0;
+    let totalRecordedAbsent = 0;
+    const studentStats = {};
+
+    students.forEach((st) => {
+      const id = st._id || st.studentId || st.rollNo;
+      studentStats[id] = {
+        studentId: id,
+        name: st.name,
+        rollNo: st.rollNo || st.studentId || 'N/A',
+        department: st.department || st.branch || 'CSE',
+        semester: st.semester || '3rd Semester',
+        attended: 0,
+        total: 0,
+      };
+    });
+
+    sessions.forEach((sess) => {
+      (sess.records || []).forEach((rec) => {
+        if (rec.status === 'present') totalRecordedPresent++;
+        if (rec.status === 'absent') totalRecordedAbsent++;
+
+        const id = rec.studentId || rec.rollNo;
+        if (!studentStats[id]) {
+          studentStats[id] = {
+            studentId: id,
+            name: rec.studentName || 'Student',
+            rollNo: rec.rollNo || id,
+            department: 'CSE',
+            semester: sess.semester || '3rd Semester',
+            attended: 0,
+            total: 0,
+          };
+        }
+        studentStats[id].total += 1;
+        if (rec.status === 'present') studentStats[id].attended += 1;
+      });
+    });
+
+    const lowAttendanceList = Object.values(studentStats)
+      .map((st) => {
+        const percentage =
+          st.total > 0 ? Number(((st.attended / st.total) * 100).toFixed(1)) : 100;
+        return { ...st, percentage, lowWarning: percentage < 75 };
+      })
+      .filter((st) => st.total > 0 && st.lowWarning);
+
+    const totalRecords = totalRecordedPresent + totalRecordedAbsent;
+    const overallPercentage =
+      totalRecords > 0 ? Number(((totalRecordedPresent / totalRecords) * 100).toFixed(1)) : 0;
+
+    return {
+      totalStudents: students.length,
+      totalSessions: sessions.length,
+      totalRecords,
+      presentCount: totalRecordedPresent,
+      absentCount: totalRecordedAbsent,
+      overallPercentage,
+      lowAttendanceCount: lowAttendanceList.length,
+      lowAttendanceList,
+      recentSessions: sessions.slice(0, 10),
+    };
+  },
+
+  // TIMETABLE OPERATIONS
+  async getTimetable(filters = {}) {
+    const { branch, day, teacher, roomNo, semester } = filters;
+    if (isMongoConnected) {
+      const query = {};
+      if (branch) query.branch = new RegExp(`^${branch}$`, 'i');
+      if (day) query.day = new RegExp(`^${day}$`, 'i');
+      if (teacher) {
+        query.$or = [
+          { teacher: new RegExp(teacher, 'i') },
+          { faculty: new RegExp(teacher, 'i') }
+        ];
+      }
+      if (roomNo) query.roomNo = new RegExp(`^${roomNo}$`, 'i');
+      if (semester) query.semester = new RegExp(`^${semester}$`, 'i');
+      const slots = await Timetable.find(query).sort({ createdAt: 1 });
+      if (slots.length > 0) return slots;
+    }
+
+    return memoryStore.timetable.filter(slot => {
+      if (branch && slot.branch.toLowerCase() !== branch.toLowerCase()) return false;
+      if (day && slot.day.toLowerCase() !== day.toLowerCase()) return false;
+      if (teacher) {
+        const tNorm = teacher.toLowerCase();
+        const slotTeacher = (slot.teacher || '').toLowerCase();
+        const slotFaculty = (slot.faculty || '').toLowerCase();
+        if (!slotTeacher.includes(tNorm) && !slotFaculty.includes(tNorm)) return false;
+      }
+      if (roomNo && (slot.roomNo || slot.room || '').toLowerCase() !== roomNo.toLowerCase()) return false;
+      if (semester && slot.semester.toLowerCase() !== semester.toLowerCase()) return false;
+      return true;
+    });
+  },
+
+  async getTimetableById(id) {
+    if (isMongoConnected) {
+      return await Timetable.findById(id);
+    }
+    return memoryStore.timetable.find(t => t.id === id || t._id === id);
+  },
+
+  async createTimetableSlot(slotData) {
+    if (isMongoConnected) {
+      return await Timetable.create(slotData);
+    }
+    const newSlot = {
+      id: `tt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      _id: `tt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      day: slotData.day || 'Monday',
+      roomNo: slotData.roomNo || '109',
+      branch: slotData.branch || 'CSE',
+      startTime: slotData.startTime || '09:00 AM',
+      endTime: slotData.endTime || '10:00 AM',
+      time: slotData.time || `${slotData.startTime || '09:00 AM'} - ${slotData.endTime || '10:00 AM'}`,
+      subject: slotData.subject || 'Subject',
+      teacher: slotData.teacher || 'SSM',
+      faculty: slotData.teacher || 'SSM',
+      code: slotData.code || 'CSE-301',
+      classType: slotData.classType || 'Lecture',
+      semester: slotData.semester || '3rd Semester',
+      course: slotData.course || 'B.Tech',
+      academicYear: slotData.academicYear || '2026-27',
+      effectiveFrom: slotData.effectiveFrom || '20-07-2026',
+      status: slotData.status || 'Verified',
+      createdAt: new Date().toISOString()
+    };
+    memoryStore.timetable.push(newSlot);
+    return newSlot;
+  },
+
+  async updateTimetableSlot(id, slotData) {
+    if (isMongoConnected) {
+      return await Timetable.findByIdAndUpdate(id, slotData, { new: true });
+    }
+    const idx = memoryStore.timetable.findIndex(t => t.id === id || t._id === id);
+    if (idx === -1) return null;
+    memoryStore.timetable[idx] = {
+      ...memoryStore.timetable[idx],
+      ...slotData,
+      time: slotData.time || (slotData.startTime && slotData.endTime ? `${slotData.startTime} - ${slotData.endTime}` : memoryStore.timetable[idx].time)
+    };
+    return memoryStore.timetable[idx];
+  },
+
+  async deleteTimetableSlot(id) {
+    if (isMongoConnected) {
+      return await Timetable.findByIdAndDelete(id);
+    }
+    const idx = memoryStore.timetable.findIndex(t => t.id === id || t._id === id);
+    if (idx !== -1) {
+      memoryStore.timetable.splice(idx, 1);
+      return true;
+    }
+    return false;
+  },
+
+  // USER DELETION AND STATUS
+  async deleteUser(id) {
+    if (isMongoConnected) {
+      return await User.findByIdAndDelete(id);
+    }
+    const idx = memoryStore.users.findIndex(u => u._id === id);
+    if (idx !== -1) return memoryStore.users.splice(idx, 1)[0];
+    return null;
+  },
+
+  async updateUserStatus(id, status) {
+    if (isMongoConnected) {
+      return await User.findByIdAndUpdate(id, { status }, { new: true });
+    }
+    const user = memoryStore.users.find(u => u._id === id);
+    if (user) user.status = status;
+    return user;
+  },
+
+  // DEPARTMENTS
+  async getDepartments() {
+    return memoryStore.departments || [];
+  },
+  async createDepartment(data) {
+    const dep = { _id: `mem_dep_${Date.now()}`, ...data, createdAt: new Date().toISOString() };
+    if (!memoryStore.departments) memoryStore.departments = [];
+    memoryStore.departments.unshift(dep);
+    return dep;
+  },
+  async updateDepartment(id, data) {
+    const idx = (memoryStore.departments || []).findIndex(d => d._id === id);
+    if (idx === -1) return null;
+    memoryStore.departments[idx] = { ...memoryStore.departments[idx], ...data };
+    return memoryStore.departments[idx];
+  },
+  async deleteDepartment(id) {
+    const idx = (memoryStore.departments || []).findIndex(d => d._id === id);
+    if (idx !== -1) return memoryStore.departments.splice(idx, 1)[0];
+    return null;
+  },
+
+  // COURSES
+  async getCourses() {
+    return memoryStore.courses || [];
+  },
+  async createCourse(data) {
+    const crs = { _id: `mem_crs_${Date.now()}`, ...data, createdAt: new Date().toISOString() };
+    if (!memoryStore.courses) memoryStore.courses = [];
+    memoryStore.courses.unshift(crs);
+    return crs;
+  },
+  async updateCourse(id, data) {
+    const idx = (memoryStore.courses || []).findIndex(c => c._id === id);
+    if (idx === -1) return null;
+    memoryStore.courses[idx] = { ...memoryStore.courses[idx], ...data };
+    return memoryStore.courses[idx];
+  },
+  async deleteCourse(id) {
+    const idx = (memoryStore.courses || []).findIndex(c => c._id === id);
+    if (idx !== -1) return memoryStore.courses.splice(idx, 1)[0];
+    return null;
+  },
+
+  // SUBJECTS
+  async getSubjects() {
+    return memoryStore.subjects || [];
+  },
+  async createSubject(data) {
+    const sub = { _id: `mem_sub_${Date.now()}`, ...data, createdAt: new Date().toISOString() };
+    if (!memoryStore.subjects) memoryStore.subjects = [];
+    memoryStore.subjects.unshift(sub);
+    return sub;
+  },
+  async updateSubject(id, data) {
+    const idx = (memoryStore.subjects || []).findIndex(s => s._id === id);
+    if (idx === -1) return null;
+    memoryStore.subjects[idx] = { ...memoryStore.subjects[idx], ...data };
+    return memoryStore.subjects[idx];
+  },
+  async deleteSubject(id) {
+    const idx = (memoryStore.subjects || []).findIndex(s => s._id === id);
+    if (idx !== -1) return memoryStore.subjects.splice(idx, 1)[0];
+    return null;
+  },
+
+  // CLASS SECTIONS
+  async getClassSections() {
+    return memoryStore.classSections || [];
+  },
+  async createClassSection(data) {
+    const cls = { _id: `mem_cls_${Date.now()}`, ...data, createdAt: new Date().toISOString() };
+    if (!memoryStore.classSections) memoryStore.classSections = [];
+    memoryStore.classSections.unshift(cls);
+    return cls;
+  },
+  async updateClassSection(id, data) {
+    const idx = (memoryStore.classSections || []).findIndex(c => c._id === id);
+    if (idx === -1) return null;
+    memoryStore.classSections[idx] = { ...memoryStore.classSections[idx], ...data };
+    return memoryStore.classSections[idx];
+  },
+  async deleteClassSection(id) {
+    const idx = (memoryStore.classSections || []).findIndex(c => c._id === id);
+    if (idx !== -1) return memoryStore.classSections.splice(idx, 1)[0];
+    return null;
+  },
+
+  // AUDIT LOGS
+  async getAuditLogs() {
+    if (isMongoConnected) {
+      return await AuditLog.find().sort({ createdAt: -1 });
+    }
+    return memoryStore.auditLogs || [];
+  },
+
+  async createAuditLog(logData) {
+    if (isMongoConnected) {
+      return await AuditLog.create({
+        logId: `LOG-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        ...logData
+      });
+    }
+    const newLog = {
+      _id: `mem_log_${Date.now()}`,
+      logId: `LOG-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      ...logData,
+      createdAt: new Date().toISOString()
+    };
+    if (!memoryStore.auditLogs) memoryStore.auditLogs = [];
+    memoryStore.auditLogs.unshift(newLog);
+    return newLog;
   }
 };

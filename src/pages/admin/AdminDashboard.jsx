@@ -29,8 +29,8 @@ export const AdminDashboard = () => {
       {/* Admin Welcome Banner */}
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold mb-2 border border-blue-500/30">
-            <ShieldCheck className="w-4 h-4 text-blue-400" /> Executive Control Tower
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-semibold mb-2 border border-teal-500/30">
+            <ShieldCheck className="w-4 h-4 text-teal-400" /> Executive Control Tower
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Administrator Command Center
@@ -43,7 +43,7 @@ export const AdminDashboard = () => {
         <div className="flex items-center gap-3">
           <Link
             to="/admin/analytics"
-            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
+            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
           >
             <BarChart3 className="w-4 h-4" /> AI Insights & Analytics
           </Link>
@@ -57,7 +57,7 @@ export const AdminDashboard = () => {
           value={analytics.totalStudents.toLocaleString()}
           subtitle="3,420 enrolled • 2,180 hostellers"
           icon={Users}
-          color="blue"
+          color="teal"
         />
         <StatCard
           title="Pending Requests"
@@ -89,9 +89,9 @@ export const AdminDashboard = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" /> Pending Approval Queue
+              <FileText className="w-5 h-5 text-teal-600" /> Pending Approval Queue
             </h3>
-            <Link to="/admin/requests" className="text-xs font-bold text-blue-600 hover:text-blue-800">
+            <Link to="/admin/requests" className="text-xs font-bold text-teal-600 hover:text-teal-800">
               Manage All ({requests.length})
             </Link>
           </div>
@@ -137,7 +137,7 @@ export const AdminDashboard = () => {
             <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" /> Grievance Desk Action Queue
             </h3>
-            <Link to="/admin/complaints" className="text-xs font-bold text-blue-600 hover:text-blue-800">
+            <Link to="/admin/complaints" className="text-xs font-bold text-teal-600 hover:text-teal-800">
               View All ({complaints.length})
             </Link>
           </div>
@@ -163,7 +163,7 @@ export const AdminDashboard = () => {
                   <div className="flex items-center justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200">
                     <button
                       onClick={() => updateComplaintStatus(c.id, 'Resolved')}
-                      className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition"
+                      className="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition"
                     >
                       Mark Resolved
                     </button>

@@ -25,7 +25,12 @@ import {
   Megaphone,
   UserCheck,
   BookOpen,
-  ClipboardList
+  ClipboardList,
+  Building2,
+  GitPullRequest,
+  Camera,
+  Radio,
+  PhoneCall
 } from 'lucide-react';
 
 export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
@@ -33,6 +38,7 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
 
   const studentLinks = [
     { label: 'Dashboard', path: '/student', icon: LayoutDashboard },
+    { label: 'Campus Beacon (SOS)', path: '/student/beacon', icon: Radio, badge: 'SOS' },
     { label: 'Service Hub', path: '/student/services', icon: Grid },
     { label: 'My Requests', path: '/student/requests', icon: FileText },
     { label: 'Leave Apply', path: '/student/leave', icon: Calendar },
@@ -42,6 +48,7 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
     { label: 'Mess Services', path: '/student/mess', icon: Utensils },
     { label: 'Complaints', path: '/student/complaints', icon: AlertTriangle },
     { label: 'Attendance', path: '/student/attendance', icon: Clock },
+    { label: 'AI Face Attendance', path: '/student/face-attendance', icon: Camera, badge: 'AI Face' },
     { label: 'Timetable', path: '/student/timetable', icon: Calendar },
     { label: 'Notice Center', path: '/student/notices', icon: Megaphone },
     { label: 'Notifications', path: '/student/notifications', icon: BellRing },
@@ -52,8 +59,10 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
 
   const teacherLinks = [
     { label: 'Faculty Dashboard', path: '/teacher', icon: LayoutDashboard },
+    { label: 'Campus Beacon (SOS)', path: '/teacher/beacon', icon: Radio, badge: 'SOS' },
     { label: 'My Classes', path: '/teacher/classes', icon: BookOpen },
     { label: 'Mark Attendance', path: '/teacher/attendance', icon: UserCheck, badge: 'Daily' },
+    { label: 'AI Face Attendance', path: '/teacher/face-attendance', icon: Camera, badge: 'AI Face' },
     { label: 'My Students', path: '/teacher/students', icon: Users },
     { label: 'Class Schedules', path: '/teacher/timetable', icon: Calendar },
     { label: 'Assignments', path: '/teacher/assignments', icon: ClipboardList },
@@ -65,15 +74,23 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
 
   const adminLinks = [
     { label: 'Admin Dashboard', path: '/admin', icon: LayoutDashboard },
+    { label: 'Campus Beacon (SOS)', path: '/admin/beacon', icon: Radio, badge: 'SOS' },
+    { label: 'Workflow Center', path: '/admin/workflows', icon: GitPullRequest, badge: 'Realtime' },
     { label: 'Manage Requests', path: '/admin/requests', icon: FileText },
     { label: 'Grievance Desk', path: '/admin/complaints', icon: AlertTriangle },
     { label: 'Student Directory', path: '/admin/students', icon: Users },
     { label: 'Faculty Directory', path: '/admin/teachers', icon: UserCheck, badge: 'Faculty' },
+    { label: 'Departments', path: '/admin/departments', icon: Building2 },
+    { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+    { label: 'Subjects', path: '/admin/subjects', icon: FileText },
+    { label: 'Classes & Sections', path: '/admin/classes', icon: Users },
     { label: 'Attendance Audit', path: '/admin/attendance', icon: Clock },
+    { label: 'AI Face Attendance', path: '/admin/face-attendance', icon: Camera, badge: 'AI Face' },
     { label: 'Class Schedules', path: '/admin/timetable', icon: Calendar },
     { label: 'Publish Notices', path: '/admin/notices', icon: Megaphone },
     { label: 'Hostel & Mess', path: '/admin/hostel', icon: Home },
     { label: 'Fee Governance', path: '/admin/fees', icon: CreditCard },
+    { label: 'Audit Trail Logs', path: '/admin/audit-logs', icon: ShieldCheck },
     { label: 'Smart Analytics', path: '/admin/analytics', icon: BarChart3, badge: 'Insights' },
     { label: 'Broadcast Alert', path: '/admin/notifications', icon: BellRing },
     { label: 'System Settings', path: '/admin/settings', icon: Settings },
@@ -100,7 +117,7 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
         {/* Mobile Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100 lg:hidden">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-7 h-7 rounded-lg bg-teal-600 flex items-center justify-center text-white font-bold text-sm">
               C
             </div>
             <span className="font-bold text-slate-900 text-base">CampusOS</span>
@@ -117,7 +134,7 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
         <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 hidden lg:block">
           <div className="flex items-center gap-2">
             {role === 'admin' ? (
-              <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <ShieldCheck className="w-4 h-4 text-teal-600 flex-shrink-0" />
             ) : role === 'teacher' ? (
               <UserCheck className="w-4 h-4 text-indigo-600 flex-shrink-0" />
             ) : (
@@ -145,7 +162,7 @@ export const Sidebar = ({ mobileOpen, onCloseMobile }) => {
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
                     isActive
-                      ? role === 'admin' ? 'bg-slate-900 text-white shadow-md' : role === 'teacher' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                      ? role === 'admin' ? 'bg-slate-900 text-white shadow-md' : role === 'teacher' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-teal-600 text-white shadow-md shadow-teal-500/20'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`
                 }

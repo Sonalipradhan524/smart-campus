@@ -63,11 +63,11 @@ router.get('/classes', protect, teacherOrAdmin, async (req, res) => {
 });
 
 // @route   POST /api/teacher/attendance
-// @desc    Mark & save class session attendance to REAL database
+// @desc    Mark & save class session attendance to REAL database with duplicate check
 router.post('/attendance', protect, teacherOrAdmin, async (req, res) => {
   try {
-    const { subject, subjectCode, semester, section, date, records } = req.body;
-    const session = await DataStore.markClassAttendance({
+    const { subject, subjectCode, semester, section, date, records, allowUpdate } = req.body;
+    const result = await DataStore.markClassAttendance({
       teacherId: req.user._id,
       teacherName: req.user.name,
       subject,
@@ -75,19 +75,25 @@ router.post('/attendance', protect, teacherOrAdmin, async (req, res) => {
       semester,
       section,
       date: date || new Date().toISOString().split('T')[0],
-      records: records || []
+      records: records || [],
+      allowUpdate: !!allowUpdate,
     });
-    res.status(201).json(session);
+
+    if (result && result.isDuplicate) {
+      return res.status(409).json(result);
+    }
+
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: 'Error saving class attendance.' });
   }
 });
 
 // @route   GET /api/teacher/attendance
-// @desc    Get past attendance sessions marked by teacher
+// @desc    Get past attendance sessions marked by teacher with filters
 router.get('/attendance', protect, teacherOrAdmin, async (req, res) => {
   try {
-    const history = await DataStore.getClassAttendanceHistory(req.user._id);
+    const history = await DataStore.getClassAttendanceHistory(req.user._id, req.query);
     res.json(history);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching attendance history.' });

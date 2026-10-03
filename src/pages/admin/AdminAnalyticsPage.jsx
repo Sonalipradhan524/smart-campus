@@ -29,7 +29,7 @@ export const AdminAnalyticsPage = () => {
                   ? 'bg-rose-50/70 border-rose-200 text-rose-900'
                   : insight.type === 'Success'
                   ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
-                  : 'bg-blue-50/70 border-blue-200 text-blue-900'
+                  : 'bg-teal-50/70 border-teal-200 text-teal-900'
               }`}
             >
               <div>
@@ -89,7 +89,7 @@ export const AdminAnalyticsPage = () => {
               <div key={bar.week} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
                 <span className="text-[10px] font-bold text-slate-700">{bar.count}</span>
                 <div
-                  className="w-full bg-blue-600 rounded-t-xl transition-all hover:bg-blue-700"
+                  className="w-full bg-teal-600 rounded-t-xl transition-all hover:bg-teal-700"
                   style={{ height: `${(bar.count / 120) * 100}%` }}
                 />
                 <span className="text-[10px] text-slate-500 font-semibold">{bar.week}</span>

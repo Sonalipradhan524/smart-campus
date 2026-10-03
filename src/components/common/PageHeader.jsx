@@ -7,7 +7,7 @@ export const PageHeader = ({ title, subtitle, badge, actionButton, children }) =
         <div className="flex items-center gap-2.5">
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{title}</h1>
           {badge && (
-            <span className="px-2.5 py-0.5 text-xs font-bold bg-blue-100 text-blue-700 rounded-full border border-blue-200">
+            <span className="px-2.5 py-0.5 text-xs font-bold bg-teal-100 text-teal-700 rounded-full border border-teal-200">
               {badge}
             </span>
           )}

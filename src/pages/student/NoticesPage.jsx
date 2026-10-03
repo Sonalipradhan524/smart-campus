@@ -38,7 +38,7 @@ export const NoticesPage = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 selectedCategory === cat
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-teal-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -54,7 +54,7 @@ export const NoticesPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search notice title or dept..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
           />
         </div>
       </div>
@@ -70,11 +70,11 @@ export const NoticesPage = () => {
           <div
             key={notice.id}
             onClick={() => setSelectedNotice(notice)}
-            className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+            className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:border-teal-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-md bg-blue-50 text-blue-700">
+                <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-md bg-teal-50 text-teal-700">
                   {notice.department}
                 </span>
                 <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export const NoticesPage = () => {
               <p className="text-xs text-slate-600 mt-2 line-clamp-3 leading-relaxed">{notice.content}</p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-600">
               <span>Read Full Notice</span>
               <span>→</span>
             </div>
@@ -109,7 +109,7 @@ export const NoticesPage = () => {
         {selectedNotice && (
           <div className="space-y-4">
             <div className="flex items-center justify-between text-xs">
-              <span className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg">{selectedNotice.department}</span>
+              <span className="px-2.5 py-1 bg-teal-50 text-teal-700 font-bold rounded-lg">{selectedNotice.department}</span>
               <span className="text-slate-400 font-mono">{selectedNotice.date}</span>
             </div>
 

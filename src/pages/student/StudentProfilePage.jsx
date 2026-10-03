@@ -35,7 +35,7 @@ export const StudentProfilePage = () => {
       >
         <button
           onClick={() => setShowEditModal(true)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
+          className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
         >
           <Edit className="w-4 h-4" /> Edit Profile Details
         </button>
@@ -43,16 +43,16 @@ export const StudentProfilePage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Digital Student ID Card */}
-        <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl space-y-6 flex flex-col justify-between">
+        <div className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl space-y-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-700/80 pb-4 mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-black text-sm text-white">
+                <div className="w-8 h-8 rounded-xl bg-teal-600 flex items-center justify-center font-black text-sm text-white">
                   C
                 </div>
                 <div>
                   <h3 className="font-extrabold text-sm text-white tracking-tight">CAMPUSOS DIGITAL ID</h3>
-                  <p className="text-[10px] text-blue-300">BPUT Autonomous Campus</p>
+                  <p className="text-[10px] text-teal-300">BPUT Autonomous Campus</p>
                 </div>
               </div>
               <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-300 rounded-md border border-emerald-500/30">
@@ -64,11 +64,11 @@ export const StudentProfilePage = () => {
               <img
                 src={user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80'}
                 alt={user?.name}
-                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-blue-500/30 shadow-md"
+                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-teal-500/30 shadow-md"
               />
               <div>
                 <h3 className="font-black text-lg text-white">{user?.name}</h3>
-                <p className="text-xs text-blue-200 font-mono mt-0.5">{user?.rollNo}</p>
+                <p className="text-xs text-teal-200 font-mono mt-0.5">{user?.rollNo}</p>
                 <p className="text-xs text-slate-400 mt-1">{user?.department}</p>
               </div>
             </div>
@@ -99,7 +99,7 @@ export const StudentProfilePage = () => {
           {/* Personal Info */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-4">
             <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-600" /> Personal Details
+              <User className="w-5 h-5 text-teal-600" /> Personal Details
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -141,8 +141,8 @@ export const StudentProfilePage = () => {
                 <span className="text-indigo-600 font-bold block">Current Semester</span>
                 <span className="font-extrabold text-slate-900 text-base mt-1 block">{user?.semester || '6th Semester'}</span>
               </div>
-              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
-                <span className="text-blue-600 font-bold block">Cumulative CGPA</span>
+              <div className="p-4 rounded-2xl bg-teal-50/60 border border-teal-100">
+                <span className="text-teal-600 font-bold block">Cumulative CGPA</span>
                 <span className="font-extrabold text-slate-900 text-base mt-1 block">{user?.cgpa || '8.92'} / 10.0</span>
               </div>
               <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100">
@@ -223,7 +223,7 @@ export const StudentProfilePage = () => {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl shadow-md flex items-center gap-1.5"
+              className="px-5 py-2 bg-teal-600 text-white font-bold rounded-xl shadow-md flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" /> Save to MongoDB
             </button>

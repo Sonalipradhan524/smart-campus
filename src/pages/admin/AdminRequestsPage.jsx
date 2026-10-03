@@ -22,10 +22,15 @@ export const AdminRequestsPage = () => {
 
   const filteredRequests = requests.filter((r) => {
     const matchStatus = activeStatus === 'All' || r.status === activeStatus;
+    const reqIdStr = (r.reqId || r.id || r._id || '').toString().toLowerCase();
+    const titleStr = (r.title || '').toString().toLowerCase();
+    const typeStr = (r.type || '').toString().toLowerCase();
+    const searchStr = (search || '').toLowerCase();
+
     const matchSearch =
-      r.id.toLowerCase().includes(search.toLowerCase()) ||
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.type.toLowerCase().includes(search.toLowerCase());
+      reqIdStr.includes(searchStr) ||
+      titleStr.includes(searchStr) ||
+      typeStr.includes(searchStr);
     return matchStatus && matchSearch;
   });
 
@@ -57,7 +62,7 @@ export const AdminRequestsPage = () => {
               onClick={() => setActiveStatus(st)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 activeStatus === st
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-teal-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -73,7 +78,7 @@ export const AdminRequestsPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search request ID or student..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
           />
         </div>
       </div>

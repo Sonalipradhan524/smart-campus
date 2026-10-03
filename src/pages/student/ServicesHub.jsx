@@ -12,13 +12,23 @@ import {
   AlertTriangle,
   Megaphone,
   Sparkles,
-  Search
+  Search,
+  Radio,
+  PhoneCall
 } from 'lucide-react';
 
 export const ServicesHub = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const services = [
+    {
+      title: 'Campus Beacon (Emergency SOS)',
+      description: 'Instant emergency call desk with 4 direct dialers and one-tap campus distress broadcast beacon.',
+      icon: Radio,
+      link: '/student/beacon',
+      badge: '24x7 SOS',
+      statusText: 'Open Beacon Desk',
+    },
     {
       title: 'Digital Gate Pass',
       description: 'Generate instant QR-verified outing permits for hostel exit and return validation.',
@@ -113,7 +123,7 @@ export const ServicesHub = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search service..."
-            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-teal-500"
           />
         </div>
       </PageHeader>

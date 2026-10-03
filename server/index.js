@@ -16,6 +16,12 @@ import feeRoutes from './routes/feeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
+import courseRoutes from './routes/courseRoutes.js';
+import subjectRoutes from './routes/subjectRoutes.js';
+import classSectionRoutes from './routes/classSectionRoutes.js';
+import auditLogRoutes from './routes/auditLogRoutes.js';
+import faceAttendanceRoutes from './routes/faceAttendanceRoutes.js';
 
 dotenv.config();
 
@@ -41,6 +47,7 @@ app.use('/api/requests', requestRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/face-attendance', faceAttendanceRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/hostel', hostelRoutes);
@@ -49,6 +56,33 @@ app.use('/api/fees', feeRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/subjects', subjectRoutes);
+app.use('/api/classes', classSectionRoutes);
+app.use('/api/audit-logs', auditLogRoutes);
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static frontend files in production
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
+// For SPA routing, send index.html for non-API requests in production
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) {
+      next();
+    }
+  });
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {

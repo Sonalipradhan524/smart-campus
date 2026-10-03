@@ -13,7 +13,7 @@ export const AdminFeesPage = () => {
       >
         <button
           onClick={() => alert('Broadcast fee payment reminders sent to 412 students with pending dues!')}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
+          className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition"
         >
           <Send className="w-4 h-4" /> Send Fee Reminders
         </button>
@@ -25,7 +25,7 @@ export const AdminFeesPage = () => {
           value="₹29.07 Cr"
           subtitle="Even Semester 2026"
           icon={CreditCard}
-          color="blue"
+          color="teal"
         />
         <StatCard
           title="Collected Revenue"

@@ -161,11 +161,15 @@ export const complaintsAPI = {
     });
     return await handleResponse(res);
   },
-  updateStatus: async (id, status, assignedTo) => {
-    const res = await fetch(`${API_BASE}/complaints/${id}`, {
-      method: 'PUT',
+  updateStatus: async (id, updatePayload, staffName = '', note = '') => {
+    const body =
+      typeof updatePayload === 'object' && updatePayload !== null
+        ? updatePayload
+        : { status: updatePayload, assignedTo: staffName, note };
+    const res = await fetch(`${API_BASE}/complaints/${id}/status`, {
+      method: 'PATCH',
       headers: getHeaders(),
-      body: JSON.stringify({ status, assignedTo }),
+      body: JSON.stringify(body),
     });
     return await handleResponse(res);
   },
@@ -198,11 +202,68 @@ export const attendanceAPI = {
     const res = await fetch(`${API_BASE}/attendance`, { headers: getHeaders() });
     return await handleResponse(res);
   },
+  getMy: async () => {
+    const res = await fetch(`${API_BASE}/attendance/my`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  getHistory: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const url = query ? `${API_BASE}/attendance/history?${query}` : `${API_BASE}/attendance/history`;
+    const res = await fetch(url, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  checkDuplicate: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const url = `${API_BASE}/attendance/check-duplicate?${query}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
 };
 
 export const timetableAPI = {
-  getAll: async () => {
-    const res = await fetch(`${API_BASE}/timetable`, { headers: getHeaders() });
+  getAll: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const url = query ? `${API_BASE}/timetable?${query}` : `${API_BASE}/timetable`;
+    const res = await fetch(url, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  getById: async (id) => {
+    const res = await fetch(`${API_BASE}/timetable/${id}`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  getByBranch: async (branch) => {
+    const res = await fetch(`${API_BASE}/timetable/branch/${encodeURIComponent(branch)}`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  getByDay: async (day) => {
+    const res = await fetch(`${API_BASE}/timetable/day/${encodeURIComponent(day)}`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  getByTeacher: async (teacher) => {
+    const res = await fetch(`${API_BASE}/timetable/teacher/${encodeURIComponent(teacher)}`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  create: async (slotData) => {
+    const res = await fetch(`${API_BASE}/timetable`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(slotData),
+    });
+    return await handleResponse(res);
+  },
+  update: async (id, slotData) => {
+    const res = await fetch(`${API_BASE}/timetable/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(slotData),
+    });
+    return await handleResponse(res);
+  },
+  delete: async (id) => {
+    const res = await fetch(`${API_BASE}/timetable/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
     return await handleResponse(res);
   },
 };
@@ -238,6 +299,25 @@ export const messAPI = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(feedback),
+    });
+    return await handleResponse(res);
+  },
+  getFoodWaste: async () => {
+    const res = await fetch(`${API_BASE}/mess/food-waste`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  createFoodWaste: async (data) => {
+    const res = await fetch(`${API_BASE}/mess/food-waste`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  deleteFoodWaste: async (id) => {
+    const res = await fetch(`${API_BASE}/mess/food-waste/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
     });
     return await handleResponse(res);
   },
@@ -294,6 +374,29 @@ export const adminAPI = {
     const res = await fetch(`${API_BASE}/admin/students`, { headers: getHeaders() });
     return await handleResponse(res);
   },
+  createStudent: async (studentData) => {
+    const res = await fetch(`${API_BASE}/admin/students`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(studentData),
+    });
+    return await handleResponse(res);
+  },
+  updateStudent: async (id, studentData) => {
+    const res = await fetch(`${API_BASE}/admin/students/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(studentData),
+    });
+    return await handleResponse(res);
+  },
+  deleteStudent: async (id) => {
+    const res = await fetch(`${API_BASE}/admin/students/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
   getTeachers: async () => {
     const res = await fetch(`${API_BASE}/admin/teachers`, { headers: getHeaders() });
     return await handleResponse(res);
@@ -306,6 +409,141 @@ export const adminAPI = {
     });
     return await handleResponse(res);
   },
+  updateTeacher: async (id, teacherData) => {
+    const res = await fetch(`${API_BASE}/admin/teachers/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(teacherData),
+    });
+    return await handleResponse(res);
+  },
+  deleteTeacher: async (id) => {
+    const res = await fetch(`${API_BASE}/admin/teachers/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+};
+
+export const departmentAPI = {
+  getAll: async () => {
+    const res = await fetch(`${API_BASE}/departments`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  create: async (data) => {
+    const res = await fetch(`${API_BASE}/departments`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  update: async (id, data) => {
+    const res = await fetch(`${API_BASE}/departments/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  delete: async (id) => {
+    const res = await fetch(`${API_BASE}/departments/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+};
+
+export const courseAPI = {
+  getAll: async () => {
+    const res = await fetch(`${API_BASE}/courses`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  create: async (data) => {
+    const res = await fetch(`${API_BASE}/courses`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  update: async (id, data) => {
+    const res = await fetch(`${API_BASE}/courses/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  delete: async (id) => {
+    const res = await fetch(`${API_BASE}/courses/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+};
+
+export const subjectAPI = {
+  getAll: async () => {
+    const res = await fetch(`${API_BASE}/subjects`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  create: async (data) => {
+    const res = await fetch(`${API_BASE}/subjects`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  update: async (id, data) => {
+    const res = await fetch(`${API_BASE}/subjects/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  delete: async (id) => {
+    const res = await fetch(`${API_BASE}/subjects/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+};
+
+export const classSectionAPI = {
+  getAll: async () => {
+    const res = await fetch(`${API_BASE}/classes`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  create: async (data) => {
+    const res = await fetch(`${API_BASE}/classes`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  update: async (id, data) => {
+    const res = await fetch(`${API_BASE}/classes/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await handleResponse(res);
+  },
+  delete: async (id) => {
+    const res = await fetch(`${API_BASE}/classes/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
 };
 
 export const aiAPI = {
@@ -314,6 +552,21 @@ export const aiAPI = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ message }),
+    });
+    return await handleResponse(res);
+  },
+};
+
+export const auditLogAPI = {
+  getLogs: async () => {
+    const res = await fetch(`${API_BASE}/audit-logs`, { headers: getHeaders() });
+    return await handleResponse(res);
+  },
+  createLog: async (logData) => {
+    const res = await fetch(`${API_BASE}/audit-logs`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(logData),
     });
     return await handleResponse(res);
   },

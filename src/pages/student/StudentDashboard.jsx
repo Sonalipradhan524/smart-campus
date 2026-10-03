@@ -18,7 +18,9 @@ import {
   ChevronRight,
   ArrowUpRight,
   MapPin,
-  UserCheck
+  UserCheck,
+  Radio,
+  PhoneCall
 } from 'lucide-react';
 
 export const StudentDashboard = () => {
@@ -35,23 +37,31 @@ export const StudentDashboard = () => {
   const unreadNoticesCount = safeNotices.filter((n) => !n.readStatus).length;
   const activeComplaintsCount = safeComplaints.filter((c) => c.status !== 'Resolved' && c.status !== 'resolved').length;
 
-  // Filter today's timetable
-  const todayClasses = safeTimetable.filter((t) => t.day === 'Tuesday' || t.day === 'Monday');
+  const studentBranch = (user?.branch || user?.department || 'CSE').toUpperCase();
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const todayName = dayNames[new Date().getDay()];
+  const activeDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].includes(todayName) ? todayName : 'Monday';
+
+  // Filter today's timetable for student's branch & day
+  const todayClasses = safeTimetable.filter((t) => {
+    const matchBranch = (t.branch || 'CSE').toUpperCase().includes(studentBranch.slice(0, 3));
+    return matchBranch && t.day === activeDay;
+  });
 
   const greeting = getGreeting();
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-600/20">
+      <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-teal-700 via-teal-600 to-indigo-700 text-white shadow-xl shadow-teal-600/20">
         <div className="relative z-10 max-w-2xl">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-semibold mb-3 border border-white/20">
-            <Sparkles className="w-3.5 h-3.5 text-blue-200" /> Smart CampusOS Connected
+            <Sparkles className="w-3.5 h-3.5 text-teal-200" /> Smart CampusOS Connected
           </span>
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
             {greeting}, {firstName} 👋
           </h1>
-          <p className="text-blue-100 text-xs sm:text-sm mt-2 leading-relaxed">
+          <p className="text-teal-100 text-xs sm:text-sm mt-2 leading-relaxed">
             Here’s what’s happening on your campus today. You have <strong className="text-white underline">{pendingRequestsCount} active request</strong> and <strong className="text-white underline">{todayClasses.length} lectures scheduled</strong>.
           </p>
         </div>
@@ -75,7 +85,7 @@ export const StudentDashboard = () => {
           value={pendingRequestsCount}
           subtitle="Outing & Certificate track"
           icon={FileText}
-          color="blue"
+          color="teal"
         />
         <StatCard
           title="Unread Notices"
@@ -96,16 +106,16 @@ export const StudentDashboard = () => {
       {/* Quick Actions Grid */}
       <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs">
         <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-600" /> Quick Campus Actions
+          <Sparkles className="w-4 h-4 text-teal-600" /> Quick Campus Actions
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Link
             to="/student/gate-pass"
-            className="p-4 rounded-2xl bg-blue-50/70 hover:bg-blue-600 hover:text-white border border-blue-100 text-blue-900 group transition duration-200"
+            className="p-4 rounded-2xl bg-teal-50/70 hover:bg-teal-600 hover:text-white border border-teal-100 text-teal-900 group transition duration-200"
           >
-            <DoorOpen className="w-6 h-6 text-blue-600 group-hover:text-white mb-2" />
+            <DoorOpen className="w-6 h-6 text-teal-600 group-hover:text-white mb-2" />
             <p className="font-bold text-xs">Request Gate Pass</p>
-            <p className="text-[10px] text-blue-600 group-hover:text-blue-100 mt-0.5">Digital Outing Permit</p>
+            <p className="text-[10px] text-teal-600 group-hover:text-teal-100 mt-0.5">Digital Outing Permit</p>
           </Link>
 
           <Link
@@ -135,6 +145,26 @@ export const StudentDashboard = () => {
             <p className="text-[10px] text-amber-600 group-hover:text-amber-100 mt-0.5">AI Auto-Classified</p>
           </Link>
         </div>
+
+        {/* Campus Beacon Emergency Call & SOS Quick Bar */}
+        <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-rose-50/60 p-3.5 rounded-2xl border border-rose-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center font-black flex-shrink-0">
+              <Radio className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <p className="font-extrabold text-xs text-rose-900">Campus Beacon (Emergency Call & SOS)</p>
+              <p className="text-[10px] text-rose-700">4 Direct Emergency Dialers (7848988524, 9861014225, 9124028834, 8917309755) & 1-Tap SOS</p>
+            </div>
+          </div>
+          <Link
+            to="/student/beacon"
+            className="w-full sm:w-auto px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm shadow-rose-600/20 transition whitespace-nowrap"
+          >
+            <PhoneCall className="w-3.5 h-3.5" />
+            <span>Open Emergency Beacon</span>
+          </Link>
+        </div>
       </div>
 
       {/* Main Grid: Today's Schedule & Request Tracker */}
@@ -145,10 +175,10 @@ export const StudentDashboard = () => {
           <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-extrabold text-slate-900 text-base">Today's Class Schedule</h3>
-                <p className="text-xs text-slate-500">Tuesday • B.Tech CSE 6th Semester</p>
+                <h3 className="font-extrabold text-slate-900 text-base">Today's Class Schedule ({activeDay})</h3>
+                <p className="text-xs text-slate-500">3rd Semester B.Tech • Branch: {studentBranch}</p>
               </div>
-              <Link to="/student/timetable" className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <Link to="/student/timetable" className="text-xs font-bold text-teal-600 hover:text-teal-800 flex items-center gap-1">
                 Full Timetable <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -156,33 +186,33 @@ export const StudentDashboard = () => {
             <div className="space-y-3">
               {todayClasses.length === 0 ? (
                 <div className="p-4 text-center text-xs text-slate-500 bg-slate-50 rounded-2xl">
-                  No classes scheduled for today.
+                  No classes scheduled for today ({activeDay}).
                 </div>
               ) : (
                 todayClasses.map((item) => (
                   <div
                     key={item.id || item._id || item.code}
-                    className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-white hover:border-blue-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-white hover:border-teal-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-extrabold text-xs flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-extrabold text-xs flex-shrink-0">
                         {item.code || 'CSE'}
                       </div>
                       <div>
                         <h4 className="font-bold text-slate-900 text-sm">{item.subject || 'Lecture'}</h4>
                         <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                          <span className="flex items-center gap-1"><UserCheck className="w-3 h-3 text-slate-400" /> {item.faculty || 'Faculty'}</span>
-                          <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-slate-400" /> {item.room || 'Room 101'}</span>
+                          <span className="flex items-center gap-1"><UserCheck className="w-3 h-3 text-slate-400" /> Faculty: {item.teacher || item.faculty}</span>
+                          <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-slate-400" /> Room {item.roomNo || item.room}</span>
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/60">
                       <span className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700">
-                        {item.time || '10:00 AM'}
+                        {item.time}
                       </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                        {item.type || 'Lecture'}
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700">
+                        {item.classType || item.type || 'Lecture'}
                       </span>
                     </div>
                   </div>
@@ -195,7 +225,7 @@ export const StudentDashboard = () => {
           <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-extrabold text-slate-900 text-base">Important Campus Notices</h3>
-              <Link to="/student/notices" className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <Link to="/student/notices" className="text-xs font-bold text-teal-600 hover:text-teal-800 flex items-center gap-1">
                 View All ({safeNotices.length}) <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -209,7 +239,7 @@ export const StudentDashboard = () => {
                 safeNotices.slice(0, 3).map((notice) => (
                   <div key={notice.id || notice._id} className="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition">
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">{notice.department || 'General'}</span>
+                      <span className="font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">{notice.department || 'General'}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-slate-400">{notice.date || 'Today'}</span>
                         {notice.priority === 'High' || notice.priority === 'Emergency' || notice.priority === 'high' ? (
@@ -234,7 +264,7 @@ export const StudentDashboard = () => {
           <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-extrabold text-slate-900 text-base">Recent Request Status</h3>
-              <Link to="/student/requests" className="text-xs font-bold text-blue-600 hover:text-blue-800">
+              <Link to="/student/requests" className="text-xs font-bold text-teal-600 hover:text-teal-800">
                 View All
               </Link>
             </div>

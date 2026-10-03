@@ -10,7 +10,7 @@ export const StatusBadge = ({ status }) => {
   } else if (normalized.includes('pending') || normalized.includes('review') || normalized.includes('submitted')) {
     styles = 'bg-amber-50 text-amber-700 border-amber-200/80 font-medium';
   } else if (normalized.includes('progress') || normalized.includes('assigned') || normalized.includes('active')) {
-    styles = 'bg-blue-50 text-blue-700 border-blue-200/80 font-medium';
+    styles = 'bg-teal-50 text-teal-700 border-teal-200/80 font-medium';
   } else if (normalized.includes('rejected') || normalized.includes('overdue') || normalized.includes('absent')) {
     styles = 'bg-rose-50 text-rose-700 border-rose-200/80 font-medium';
   }

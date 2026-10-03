@@ -21,10 +21,16 @@ export const RequestsPage = () => {
         : activeTab === 'Pending'
         ? req.status === 'Pending' || req.status === 'In Progress'
         : req.status === activeTab;
+
+    const reqIdStr = (req.reqId || req.id || req._id || '').toString().toLowerCase();
+    const titleStr = (req.title || '').toString().toLowerCase();
+    const typeStr = (req.type || '').toString().toLowerCase();
+    const searchStr = (search || '').toLowerCase();
+
     const matchesSearch =
-      req.id.toLowerCase().includes(search.toLowerCase()) ||
-      req.title.toLowerCase().includes(search.toLowerCase()) ||
-      req.type.toLowerCase().includes(search.toLowerCase());
+      reqIdStr.includes(searchStr) ||
+      titleStr.includes(searchStr) ||
+      typeStr.includes(searchStr);
     return matchesTab && matchesSearch;
   });
 
@@ -45,7 +51,7 @@ export const RequestsPage = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 activeTab === tab
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-teal-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -61,7 +67,7 @@ export const RequestsPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search request ID or title..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-teal-500"
           />
         </div>
       </div>
@@ -78,10 +84,10 @@ export const RequestsPage = () => {
           filteredRequests.map((req) => (
             <div
               key={req.id}
-              className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-blue-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-teal-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="flex items-start gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center font-bold text-xs flex-shrink-0">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -104,7 +110,7 @@ export const RequestsPage = () => {
               <div className="flex items-center justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                 <button
                   onClick={() => setSelectedReq(req)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition"
+                  className="px-4 py-2 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition"
                 >
                   <Eye className="w-4 h-4" /> View Details & Timeline
                 </button>
