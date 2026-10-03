@@ -73,9 +73,9 @@ const distPath = path.join(__dirname, '../dist');
 app.use(express.static(distPath));
 
 // For SPA routing, send index.html for non-API requests in production
-app.get('*', (req, res, next) => {
+app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
-    return next();
+    return res.status(404).json({ message: 'API route not found' });
   }
   res.sendFile(path.join(distPath, 'index.html'), (err) => {
     if (err) {
