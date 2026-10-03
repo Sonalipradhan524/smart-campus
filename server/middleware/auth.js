@@ -13,22 +13,8 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    if (token === 'demo_token' || token.startsWith('demo_')) {
-      const demoId = token.startsWith('demo_teacher')
-        ? 'mem_user_teacher_1'
-        : token.startsWith('demo_admin')
-        ? 'mem_user_admin_1'
-        : 'mem_user_student_1';
-      req.user = await DataStore.findUserById(demoId);
-      if (req.user) return next();
-    }
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey_campusos_bput_2026');
     req.user = await DataStore.findUserById(decoded.id);
-    
-    if (!req.user) {
-      req.user = await DataStore.findUserById('mem_user_student_1');
-    }
 
     if (!req.user) {
       return res.status(401).json({ message: 'Not authorized. User record not found.' });
@@ -36,11 +22,6 @@ export const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    const fallbackUser = await DataStore.findUserById('mem_user_student_1');
-    if (fallbackUser) {
-      req.user = fallbackUser;
-      return next();
-    }
     return res.status(401).json({ message: 'Not authorized. Token invalid or expired.' });
   }
 };
@@ -50,6 +31,22 @@ export const adminOnly = (req, res, next) => {
     next();
   } else {
     res.status(403).json({ message: 'Forbidden. Admin privileges required.' });
+  }
+};
+
+export const teacherOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'teacher') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden. Teacher privileges required.' });
+  }
+};
+
+export const studentOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'student') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden. Student privileges required.' });
   }
 };
 

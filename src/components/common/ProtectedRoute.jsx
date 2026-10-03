@@ -4,9 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 import { ShieldAlert, ArrowLeft, GraduationCap, ShieldCheck, UserCheck } from 'lucide-react';
 
 export const ProtectedRoute = ({ allowedRoles, children }) => {
-  const { user, role } = useAuth();
+  const { user, role, token } = useAuth();
 
-  if (!user) {
+  if (!user || !token) {
     return <Navigate to="/login" replace />;
   }
 

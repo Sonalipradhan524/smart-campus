@@ -63,18 +63,24 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem('campusos_user');
-      return savedUser ? JSON.parse(savedUser) : defaultStudentUser;
+      return savedUser ? JSON.parse(savedUser) : null;
     } catch (e) {
-      return defaultStudentUser;
+      return null;
     }
   });
 
   const [token, setToken] = useState(() => {
-    return localStorage.getItem('campusos_token') || 'demo_token';
+    return localStorage.getItem('campusos_token') || null;
   });
 
   const [role, setRole] = useState(() => {
-    return user ? user.role : 'student';
+    try {
+      const savedUser = localStorage.getItem('campusos_user');
+      if (savedUser) {
+        return JSON.parse(savedUser).role || null;
+      }
+    } catch (e) {}
+    return null;
   });
 
   const [loading, setLoading] = useState(false);
@@ -239,7 +245,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        role: role || 'student',
+        role: role || (user ? user.role : null),
         token,
         loading,
         authError,
@@ -253,7 +259,7 @@ export const AuthProvider = ({ children }) => {
         updateProfile,
         logout,
         switchRole,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && !!token,
       }}
     >
       {children}

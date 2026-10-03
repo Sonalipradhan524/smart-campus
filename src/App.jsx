@@ -70,24 +70,35 @@ export default function App() {
       <AuthProvider>
         <DataProvider>
           <Routes>
+            {/* Choose Your Role / Authentication Landing Page */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+
+            {/* Role-Specific Login & Registration Routes */}
             <Route path="/student/login" element={<StudentLogin />} />
+            <Route path="/login/student" element={<StudentLogin />} />
             <Route path="/student/register" element={<StudentRegister />} />
+
             <Route path="/teacher/login" element={<TeacherLogin />} />
+            <Route path="/login/teacher" element={<TeacherLogin />} />
             <Route path="/teacher/register" element={<TeacherRegister />} />
+
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/login/admin" element={<AdminLogin />} />
+
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* Student Protected Portal */}
             <Route
               path="/student"
               element={
-                <ProtectedRoute allowedRoles={['student', 'admin']}>
+                <ProtectedRoute allowedRoles={['student']}>
                   <AppLayout />
                 </ProtectedRoute>
               }
             >
               <Route index element={<StudentDashboard />} />
+              <Route path="dashboard" element={<StudentDashboard />} />
               <Route path="services" element={<ServicesHub />} />
               <Route path="requests" element={<RequestsPage />} />
               <Route path="leave" element={<LeaveApplyPage />} />
@@ -112,12 +123,13 @@ export default function App() {
             <Route
               path="/teacher"
               element={
-                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                <ProtectedRoute allowedRoles={['teacher']}>
                   <AppLayout />
                 </ProtectedRoute>
               }
             >
               <Route index element={<TeacherDashboard />} />
+              <Route path="dashboard" element={<TeacherDashboard />} />
               <Route path="classes" element={<TeacherClassesPage />} />
               <Route path="attendance" element={<TeacherAttendancePage />} />
               <Route path="face-attendance" element={<FaceAttendanceHub />} />
@@ -142,6 +154,7 @@ export default function App() {
               }
             >
               <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="requests" element={<AdminRequestsPage />} />
               <Route path="complaints" element={<AdminComplaintsPage />} />
               <Route path="students" element={<AdminStudentsPage />} />
@@ -168,8 +181,8 @@ export default function App() {
               <Route path="settings" element={<AdminSettingsPage />} />
             </Route>
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/student" replace />} />
+            {/* Fallback to Role Selection / Login */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </DataProvider>
       </AuthProvider>

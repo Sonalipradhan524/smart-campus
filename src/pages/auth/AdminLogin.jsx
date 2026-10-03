@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ShieldCheck, Lock, User, ArrowRight, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Lock, User, ArrowRight, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 export const AdminLogin = () => {
   const navigate = useNavigate();
-  const { loginAdmin, loading } = useAuth();
+  const { user, isAuthenticated, loginAdmin, loading } = useAuth();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // If already logged in as admin, redirect to admin dashboard
+  if (isAuthenticated && user?.role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +27,7 @@ export const AdminLogin = () => {
 
     const res = await loginAdmin(identifier.trim(), password.trim());
     if (res.success) {
-      navigate('/admin/dashboard');
+      navigate('/admin');
     } else {
       setErrorMessage(res.message || 'Invalid Administrator credentials.');
     }
@@ -39,14 +44,14 @@ export const AdminLogin = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-2 shadow-inner">
             <ShieldCheck className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Administrator Portal</h1>
-          <p className="text-xs text-slate-400">Restricted Access — BPUT Institutional Administration</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Administrator Login</h1>
+          <p className="text-xs text-slate-400">Campus Connect Restricted Institutional Portal</p>
         </div>
 
         {/* Security Warning Notice */}
         <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-300 text-[11px] font-medium flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-          <span>Public administrator registration is disabled. Accounts can only be created by an existing authenticated administrator.</span>
+          <span>Public administrator registration is restricted. Only authorized campus administrators may log in.</span>
         </div>
 
         {/* Error Alert */}
@@ -102,9 +107,9 @@ export const AdminLogin = () => {
         {/* Links */}
         <div className="pt-4 border-t border-slate-800 text-center space-y-3">
           <div className="flex justify-center items-center gap-4 text-[11px] text-slate-500 font-medium">
-            <Link to="/student/login" className="hover:text-slate-300 transition">Student Login</Link>
-            <span>•</span>
-            <Link to="/teacher/login" className="hover:text-slate-300 transition">Faculty Login</Link>
+            <Link to="/login" className="text-amber-400 hover:text-amber-300 transition flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Choose another role
+            </Link>
           </div>
         </div>
       </div>

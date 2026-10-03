@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { GraduationCap, Lock, User, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-react';
+import { GraduationCap, Lock, User, ArrowRight, ShieldCheck, HelpCircle, ArrowLeft } from 'lucide-react';
 
 export const StudentLogin = () => {
   const navigate = useNavigate();
-  const { loginStudent, loading } = useAuth();
+  const { user, isAuthenticated, loginStudent, loading } = useAuth();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // If already logged in as student, redirect to student dashboard
+  if (isAuthenticated && user?.role === 'student') {
+    return <Navigate to="/student" replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +27,7 @@ export const StudentLogin = () => {
 
     const res = await loginStudent(identifier.trim(), password.trim());
     if (res.success) {
-      navigate('/student/dashboard');
+      navigate('/student');
     } else {
       setErrorMessage(res.message || 'Invalid Student ID or password.');
     }
@@ -99,7 +104,7 @@ export const StudentLogin = () => {
           </button>
         </form>
 
-        {/* Registration Link */}
+        {/* Registration & Role Switch Links */}
         <div className="pt-4 border-t border-slate-700/60 text-center space-y-3">
           <p className="text-xs text-slate-400">
             Don't have a student account yet?{' '}
@@ -107,10 +112,10 @@ export const StudentLogin = () => {
               Create Student Account
             </Link>
           </p>
-          <div className="flex justify-center items-center gap-4 text-[11px] text-slate-500 font-medium">
-            <Link to="/teacher/login" className="hover:text-slate-300 transition">Faculty Login</Link>
-            <span>•</span>
-            <Link to="/admin/login" className="hover:text-slate-300 transition">Admin Portal</Link>
+          <div className="flex justify-center items-center gap-4 text-[11px] text-slate-500 font-medium pt-1">
+            <Link to="/login" className="text-teal-400 hover:text-teal-300 transition flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Choose another role
+            </Link>
           </div>
         </div>
       </div>

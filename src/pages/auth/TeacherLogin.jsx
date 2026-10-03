@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { School, Lock, User, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-react';
+import { School, Lock, User, ArrowRight, ShieldCheck, HelpCircle, ArrowLeft } from 'lucide-react';
 
 export const TeacherLogin = () => {
   const navigate = useNavigate();
-  const { loginTeacher, loading } = useAuth();
+  const { user, isAuthenticated, loginTeacher, loading } = useAuth();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // If already logged in as teacher, redirect to teacher dashboard
+  if (isAuthenticated && user?.role === 'teacher') {
+    return <Navigate to="/teacher" replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +27,7 @@ export const TeacherLogin = () => {
 
     const res = await loginTeacher(identifier.trim(), password.trim());
     if (res.success) {
-      navigate('/teacher/dashboard');
+      navigate('/teacher');
     } else {
       setErrorMessage(res.message || 'Invalid Employee ID or password.');
     }
@@ -39,8 +44,8 @@ export const TeacherLogin = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-purple-600/20 border border-purple-500/30 text-purple-400 mb-2 shadow-inner">
             <School className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Faculty Portal Login</h1>
-          <p className="text-xs text-slate-400">BPUT Teacher & Academic Staff Credentials</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Teacher Portal Login</h1>
+          <p className="text-xs text-slate-400">Campus Connect Faculty & Academic Staff Credentials</p>
         </div>
 
         {/* Error Alert */}
@@ -93,7 +98,7 @@ export const TeacherLogin = () => {
             disabled={loading}
             className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-purple-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {loading ? 'Authenticating...' : 'Login as Faculty Member'}
+            {loading ? 'Authenticating...' : 'Login as Teacher'}
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
@@ -101,15 +106,15 @@ export const TeacherLogin = () => {
         {/* Links */}
         <div className="pt-4 border-t border-slate-700/60 text-center space-y-3">
           <p className="text-xs text-slate-400">
-            Need a faculty account?{' '}
+            Need a teacher account?{' '}
             <Link to="/teacher/register" className="font-bold text-purple-400 hover:underline">
-              Create Faculty Account
+              Create Teacher Account
             </Link>
           </p>
-          <div className="flex justify-center items-center gap-4 text-[11px] text-slate-500 font-medium">
-            <Link to="/student/login" className="hover:text-slate-300 transition">Student Login</Link>
-            <span>•</span>
-            <Link to="/admin/login" className="hover:text-slate-300 transition">Admin Portal</Link>
+          <div className="flex justify-center items-center gap-4 text-[11px] text-slate-500 font-medium pt-1">
+            <Link to="/login" className="text-purple-400 hover:text-purple-300 transition flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Choose another role
+            </Link>
           </div>
         </div>
       </div>
